@@ -1,21 +1,9 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 12/31/2023 09:32:24 PM
--- Design Name: 
+-- Author: Akshay Gopinath 
 -- Module Name: mux4_1 - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
+-- Dependancies: None
+-- Project Name: CE339 Assignment 1
+-- Target Devices: Digilent Basys 3 
 ----------------------------------------------------------------------------------
 
 
