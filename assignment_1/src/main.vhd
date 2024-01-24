@@ -15,7 +15,6 @@ entity main is
         sw   : in  STD_LOGIC_VECTOR (15 downto 0);
         clk  : in  STD_LOGIC;
         btnU, btnD,  btnC  : in  STD_LOGIC; --btnL, btnR,
-        LED  : out STD_LOGIC;
         seg  : out STD_LOGIC_VECTOR (6 downto 0);
         dp   : out STD_LOGIC;
         an   : out STD_LOGIC_VECTOR (3 downto 0));
@@ -47,40 +46,7 @@ architecture Behavioral of main is
 
     Signal state_machine_out : STD_LOGIC_VECTOR (15 downto 0);
 
-    -- Signal bcd_counter_out : STD_LOGIC_VECTOR (7 downto 0);
-    -- Signal bcd_clock : STD_LOGIC := '0';
-    -- Signal bcd_up_down : STD_LOGIC := '0';
-
-    -- Signal bcd_counter_out_1 : STD_LOGIC_VECTOR (7 downto 0);
-    -- Signal bcd_clock_1 : STD_LOGIC := '0';
-    -- Signal bcd_up_down_1 : STD_LOGIC := '0';
-    -- Signal bcd_cout_1 : STD_LOGIC := '0';
-    -- Signal bcd_cout : STD_LOGIC := '0';
-
-    -- Signal state_machine_out : STD_LOGIC := '0';
-    -- Signal temp : STD_LOGIC := '0';
-    
-    -- Signal btn_reg : STD_LOGIC;
-
-    -- Signal state_machine_reset : STD_LOGIC := '0';
 begin
---    LED <= '1' when bcd_counter_out = "00000000" and bcd_counter_out_1 = "00000000" else '0';
-    -- bcd_clock <= bcd_cout_1 when state_machine_out = '1' else (btnD_debounced or btnU_debounced);
-    -- bcd_up_down <= '1' when state_machine_out = '1' else btn_reg;
-    -- process(btnD, btnU, state_machine_out, bcd_cout_1)
-    -- begin
-    --     if btnU = '1' then
-    --         btn_reg <= '0';
-    --     else
-    --         if state_machine_out = '1' then
-    --             if rising_edge(btnD) then
-    --                 btn_reg <= '1';
-    --             end if;
-    --         elsif state_machine_out = '0' then
-    --             btn_reg <= '1';
-    --         end if;
-    --     end if;
-    -- end process;
 
     -- instantiate a clock divider for the 500Hz clock
     clk_div_unit : entity work.nbit_clk_div(Behavioral)
@@ -123,7 +89,7 @@ begin
     button_debounce_unit_down : entity work.button_debounce(Behavioral)
         Port map (clk => clk_4hz, button => btnD, debounce_out => btnD_debounced);
 
-    -- instantiate a state machine
+    -- instantiate a state machine for thr control logic
     state_machine_unit : entity work.state_machine(Behavioral)
         Port map (orig_clk => clk, ck => clk_1hz, btnC_debounced => btnC_debounced, btnU_debounced => btnU_debounced, 
                   btnD_debounced => btnD_debounced, 

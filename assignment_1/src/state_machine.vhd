@@ -55,20 +55,6 @@ architecture Behavioral of state_machine is
 
     Signal bcd_is_zero_sec_int : STD_LOGIC := '0';
 begin
-    -- SYNC_PROCESS: process(btnC_debounced, reset_signal)
-    -- begin
-    --     if rising_edge(ck) begin
-    --         if reset_signal = '1' then
-    --             CURRENT_STATE <= STATE_SET;
-    --         else
-    --             if (btnC_debounced = '1') then
-    --                 CURRENT_STATE <= NEXT_STATE;
-    --             else
-    --                 CURRENT_STATE <= CURRENT_STATE;
-    --             end if;
-    --         end if;
-    --     end if;
-    -- end process;
 
     SYNC_PROCESS: process(btnC_debounced, reset_signal)
     begin
@@ -103,23 +89,6 @@ begin
                     NEXT_STATE <= STATE_SET;
             end case;
         end if;
-
-        -- case CURRENT_STATE is
-        --     when STATE_SET =>
-        --         -- increment the minutes counter if btnU is pressed and if btnD is pressed decrement the minutes counter
-        --         bcd_up_down_min <= btn_reg;
-        --         bcd_clock_min <= (btnU_debounced or btnD_debounced);
-        --         bcd_clock_sec <= bcd_clock_min;
-        --         bcd_up_down_sec <= '0';
-        --         bcd_counter_sec_reset <= bcd_clock_min;
-        --     when STATE_GO =>
-        --         -- decrement secounds counter
-        --         bcd_up_down_sec <= '1';
-        --         bcd_up_down_min <= '1';
-        --         bcd_clock_sec <= ck;
-        --         bcd_clock_min <= bcd_cout_sec;
-        --         bcd_counter_sec_reset <= '0';
-        -- end case;
     end process;
 
     -- STATE_DECODE : process(CURRENT_STATE, bcd_counter_out_min, bcd_counter_out_sec)
