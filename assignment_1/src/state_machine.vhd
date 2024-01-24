@@ -91,20 +91,6 @@ begin
         end if;
     end process;
 
-    -- STATE_DECODE : process(CURRENT_STATE, bcd_counter_out_min, bcd_counter_out_sec)
-    -- begin
-    --     if rising_edge(orig_clk) then
-    --         case CURRENT_STATE is
-    --             when STATE_SET =>
-    --                 NEXT_STATE <= STATE_GO;
-    --             when STATE_GO =>
-    --                 NEXT_STATE <= STATE_SET;
-    --             when others =>
-    --                 NEXT_STATE <= STATE_SET;
-    --         end case;
-    --     end if;
-    -- end process;
-
     -- instantiate BCD counter for minutes
     bcd_counter_unit : entity work.nbit_bcd_counter(Behavioral)
         Generic map (bcd_width => bcd_width, max_value => max_value_minutes)
