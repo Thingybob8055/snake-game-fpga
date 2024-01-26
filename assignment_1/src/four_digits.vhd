@@ -49,9 +49,7 @@ architecture Behavioral of four_digits is
     Component one_digit
     port (
         digit : in STD_LOGIC_VECTOR (3 downto 0);
-        seg : out STD_LOGIC_VECTOR (6 downto 0);
-        an : out STD_LOGIC_VECTOR (3 downto 0);
-        dp : out STD_LOGIC
+        seg : out STD_LOGIC_VECTOR (6 downto 0)
     );
     End Component;
 
@@ -124,9 +122,7 @@ begin
         digit(1) => mux_out_2,
         digit(2) => mux_out_3,
         digit(3) => mux_out_4,
-        seg => seg,
-        an => an,
-        dp => dp
+        seg => seg
     );
 
     -- if count = 2, display dp = 0 else dp = 1

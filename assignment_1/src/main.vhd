@@ -12,7 +12,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity main is
     Port (
-        sw   : in  STD_LOGIC_VECTOR (15 downto 0);
         clk  : in  STD_LOGIC;
         btnU, btnD,  btnC  : in  STD_LOGIC; --btnL, btnR,
         seg  : out STD_LOGIC_VECTOR (6 downto 0);
