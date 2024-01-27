@@ -45,6 +45,9 @@ architecture Behavioral of main is
 
     Signal state_machine_out : STD_LOGIC_VECTOR (15 downto 0);
 
+    Signal button_up_handle : STD_LOGIC;
+    Signal button_down_handle : STD_LOGIC;
+
 begin
 
     -- instantiate a clock divider for the 500Hz clock
@@ -88,10 +91,16 @@ begin
     button_debounce_unit_down : entity work.button_debounce(Behavioral)
         Port map (clk => clk_4hz, button => btnD, debounce_out => btnD_debounced);
 
+    button_handler_unit : entity work.button_handler(Behavioral)
+        Port map (clk => clk, btn => btnU_debounced, btn_press => button_up_handle);
+
+    button_handler_unit_down : entity work.button_handler(Behavioral)
+        Port map (clk => clk, btn => btnD_debounced, btn_press => button_down_handle);
+
     -- instantiate a state machine for thr control logic
     state_machine_unit : entity work.state_machine(Behavioral)
-        Port map (orig_clk => clk, ck => clk_1hz, btnC_debounced => btnC_debounced, btnU_debounced => btnU_debounced, 
-                  btnD_debounced => btnD_debounced, 
+        Port map (orig_clk => clk, ck => clk_1hz, btnC_debounced => btnC_debounced, btnU_debounced => button_up_handle, 
+                  btnD_debounced => button_down_handle, 
                   btnC => btnC, btnU => btnU, btnD => btnD, output => state_machine_out);
 
 
