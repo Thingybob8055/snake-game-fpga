@@ -91,9 +91,11 @@ begin
     button_debounce_unit_down : entity work.button_debounce(Behavioral)
         Port map (clk => clk_4hz, button => btnD, debounce_out => btnD_debounced);
 
-    button_handler_unit : entity work.button_handler(Behavioral)
+    -- instantiate a button handler for btnU
+    button_handler_unit_up : entity work.button_handler(Behavioral)
         Port map (clk => clk, btn => btnU_debounced, btn_press => button_up_handle);
 
+    -- instantiate a button handler for btnD
     button_handler_unit_down : entity work.button_handler(Behavioral)
         Port map (clk => clk, btn => btnD_debounced, btn_press => button_down_handle);
 
