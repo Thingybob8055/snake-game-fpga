@@ -20,9 +20,9 @@ entity main is
 end main;
 
 architecture Behavioral of main is
-    constant div_factor : NATURAL := 200000;
-    constant high_count : NATURAL := div_factor/2;
-    constant num_of_bits : NATURAL := 18;
+    constant div_factor_500Hz : NATURAL := 200000;
+    constant high_count_500Hz : NATURAL := div_factor_500Hz/2;
+    constant num_of_bits_500Hz : NATURAL := 18;
     
     constant div_factor_4hz : NATURAL := 25000000;
     constant high_count_4hz : NATURAL := div_factor_4hz/2;
@@ -52,9 +52,9 @@ begin
 
     -- instantiate a clock divider for the 500Hz clock
     clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
-        Generic map (div_factor => div_factor,
-                     high_count => high_count,
-                     num_of_bits => num_of_bits)
+        Generic map (div_factor => div_factor_500Hz,
+                     high_count => high_count_500Hz,
+                     num_of_bits => num_of_bits_500Hz)
         Port map (clk_in => clk, output => clk_500hz);
 
     -- instantiate a clock divider for the 4Hz clock
