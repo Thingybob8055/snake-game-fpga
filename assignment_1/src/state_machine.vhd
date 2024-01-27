@@ -22,7 +22,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity state_machine is
     Port ( orig_clk : in STD_LOGIC; 
            ck : in STD_LOGIC;
-           btnC, btnU, btnD : in STD_LOGIC;
+           btnU, btnD : in STD_LOGIC;
            btnC_debounced, btnU_debounced, btnD_debounced : in STD_LOGIC;
            output : out STD_LOGIC_VECTOR (15 downto 0)
         );

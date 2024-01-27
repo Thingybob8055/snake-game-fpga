@@ -20,9 +20,9 @@ entity main is
 end main;
 
 architecture Behavioral of main is
-    constant div_factor_500Hz : NATURAL := 200000;
-    constant high_count_500Hz : NATURAL := div_factor_500Hz/2;
-    constant num_of_bits_500Hz : NATURAL := 18;
+    constant div_factor : NATURAL := 200000;
+    constant high_count : NATURAL := div_factor/2;
+    constant num_of_bits : NATURAL := 18;
     
     constant div_factor_4hz : NATURAL := 25000000;
     constant high_count_4hz : NATURAL := div_factor_4hz/2;
@@ -51,10 +51,10 @@ architecture Behavioral of main is
 begin
 
     -- instantiate a clock divider for the 500Hz clock
-    clk_div_unit : entity work.nbit_clk_div(Behavioral)
-        Generic map (div_factor => div_factor_500Hz,
-                     high_count => high_count_500Hz,
-                     num_of_bits => num_of_bits_500Hz)
+    clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
+        Generic map (div_factor => div_factor,
+                     high_count => high_count,
+                     num_of_bits => num_of_bits)
         Port map (clk_in => clk, output => clk_500hz);
 
     -- instantiate a clock divider for the 4Hz clock
@@ -64,6 +64,7 @@ begin
                      num_of_bits => num_of_bits_4hz)
         Port map (clk_in => clk, output => clk_4hz);
 
+    -- instantiate a clock divider for the 1Hz clock
     clk_div_unit_1hz : entity work.nbit_clk_div(Behavioral)
         Generic map (div_factor => div_factor_1hz,
                      high_count => high_count_1hz,
@@ -102,8 +103,7 @@ begin
     -- instantiate a state machine for thr control logic
     state_machine_unit : entity work.state_machine(Behavioral)
         Port map (orig_clk => clk, ck => clk_1hz, btnC_debounced => btnC_debounced, btnU_debounced => button_up_handle, 
-                  btnD_debounced => button_down_handle, 
-                  btnC => btnC, btnU => btnU, btnD => btnD, output => state_machine_out);
+                  btnD_debounced => button_down_handle, btnU => btnU, btnD => btnD, output => state_machine_out);
 
 
 end Behavioral;
