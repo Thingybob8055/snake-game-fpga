@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Author: Akshay Gopinath 
 -- Module Name: main - Behavioral
--- Dependancies: nbit_clk_div, four_digits(one_digit), button_debounce, state_machine
+-- Dependancies: nbit_clk_div, four_digits(one_digit), button_debounce, state_machine, button_handler
 -- Project Name: CE339 Assignment 1
 -- Target Devices: Digilent Basys 3 
 ----------------------------------------------------------------------------------
