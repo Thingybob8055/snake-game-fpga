@@ -21,33 +21,33 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity nbit_clk_div is
     Generic (
-        div_factor : NATURAL := 16;
-        high_count : NATURAL := 8; -- num of clk pulses until high; duty cycle = (div_factor - high_count) / div_factor
-        num_of_bits : NATURAL := 4
+        div_factor : natural := 16;
+        high_count : natural := 8; -- num of clk pulses until high; duty cycle = (div_factor - high_count) / div_factor
+        num_of_bits : natural := 4
     );
-    Port ( clk_in : in STD_LOGIC;
-           output : out STD_LOGIC
+    Port ( clk_in : in std_logic;
+           output : out std_logic
     );
 end nbit_clk_div;
 
 architecture Behavioral of nbit_clk_div is
-    Component nbit_counter is
+    component nbit_counter is
         Generic (
-            width : NATURAL;
-            modulo : NATURAL 
+            width : natural;
+            modulo : natural 
         );
         Port (
-            clk: in STD_LOGIC;
-            cin    : in  STD_LOGIC;
-            negate: in STD_LOGIC;
-            rst : in STD_LOGIC;
-            cout   : out STD_LOGIC;
-            output : out STD_LOGIC_VECTOR((width-1) downto 0)
+            clk: in std_logic;
+            cin    : in  std_logic;
+            negate: in std_logic;
+            rst : in std_logic;
+            cout   : out std_logic;
+            output : out std_logic_vector((width-1) downto 0)
         );
-    end Component;
-    Signal ignore : STD_LOGIC;
-    Constant HI_TIME : STD_LOGIC_VECTOR := STD_LOGIC_VECTOR(TO_UNSIGNED(high_count-1, num_of_bits));
-    Signal counter_output : STD_LOGIC_VECTOR((num_of_bits-1) downto 0);
+    end component;
+    signal ignore : std_logic;
+    constant HI_TIME : std_logic_vector := std_logic_vector(to_unsigned(high_count-1, num_of_bits));
+    signal counter_output : std_logic_vector((num_of_bits-1) downto 0);
 begin
     counter : nbit_counter
     Generic Map (
@@ -64,7 +64,7 @@ begin
     );
 
     process(clk_in)
-        variable out_int : STD_LOGIC := '0';
+        variable out_int : std_logic := '0';
     begin
         output <= out_int;
         if rising_edge(clk_in) then

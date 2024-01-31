@@ -20,23 +20,23 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity nbit_bcd_counter is
-    Generic (bcd_width : NATURAL := 8;
-             max_value : NATURAL := 60 
+    Generic (bcd_width : natural := 8;
+             max_value : natural := 60 
     );   
-    Port ( orig_clk : in STD_LOGIC;
-           clk : in STD_LOGIC;
-           up_down : in STD_LOGIC;
-           reset : in STD_LOGIC;
-           cout : out STD_LOGIC;
-           is_zero : out STD_LOGIC;
-           output : out STD_LOGIC_VECTOR ((bcd_width-1) downto 0));
+    Port ( orig_clk : in std_logic;
+           clk : in std_logic;
+           up_down : in std_logic;
+           reset : in std_logic;
+           cout : out std_logic;
+           is_zero : out std_logic;
+           output : out std_logic_vector ((bcd_width-1) downto 0));
 end nbit_bcd_counter;
 
 architecture Behavioral of nbit_bcd_counter is
-    Signal count_1 : UNSIGNED (3 downto 0) := (others => '0');
-    Signal count_2 : UNSIGNED (3 downto 0) := (others => '0');
-    Signal cout_int : STD_LOGIC := '0';
-    Signal last_clk : STD_LOGIC := '0';
+    signal count_1 : unsigned (3 downto 0) := (others => '0');
+    signal count_2 : unsigned (3 downto 0) := (others => '0');
+    signal cout_int : std_logic := '0';
+    signal last_clk : std_logic := '0';
 begin
     process(orig_clk, clk , up_down, reset)
     begin
@@ -91,6 +91,6 @@ begin
     is_zero <= '1' when (count_2 = "0000" and count_1 = "0000") else '0';
 
     -- output is the concatenation of count_2 and count_1 if bcd_width = 8, if bcd_width = 4 then output is count_1
-    output <= STD_LOGIC_VECTOR(count_2 & count_1) when bcd_width = 8 else STD_LOGIC_VECTOR(count_1);
+    output <= std_logic_vector(count_2 & count_1) when bcd_width = 8 else std_logic_vector(count_1);
 
 end Behavioral;

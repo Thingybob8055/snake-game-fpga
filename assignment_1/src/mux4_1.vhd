@@ -20,9 +20,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity mux4_1 is
-    Port ( a : in STD_LOGIC_VECTOR (3 downto 0);
-           s : in STD_LOGIC_VECTOR (1 downto 0);
-           y : out STD_LOGIC);
+    Port ( a : in std_logic_vector (3 downto 0);
+           s : in std_logic_vector (1 downto 0);
+           y : out std_logic);
 end mux4_1;
 
 architecture Behavioral of mux4_1 is

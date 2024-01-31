@@ -20,13 +20,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity button_debounce is
-    Port ( clk : in STD_LOGIC;
-           button : in STD_LOGIC;
-           debounce_out : out STD_LOGIC);
+    Port ( clk : in std_logic;
+           button : in std_logic;
+           debounce_out : out std_logic);
 end button_debounce;
 
 architecture Behavioral of button_debounce is
-    Signal out_int : STD_LOGIC;
+    Signal out_int : std_logic;
 begin
     process(clk)
     begin

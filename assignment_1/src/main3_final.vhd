@@ -12,41 +12,41 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity main is
     Port (
-        clk  : in  STD_LOGIC;
-        btnU, btnD,  btnC  : in  STD_LOGIC; --btnL, btnR,
-        seg  : out STD_LOGIC_VECTOR (6 downto 0);
-        dp   : out STD_LOGIC;
-        an   : out STD_LOGIC_VECTOR (3 downto 0));
+        clk  : in  std_logic;
+        btnU, btnD,  btnC  : in  std_logic;
+        seg  : out std_logic_vector (6 downto 0);
+        dp   : out std_logic;
+        an   : out std_logic_vector (3 downto 0));
 end main;
 
 architecture Behavioral of main is
-    constant div_factor_500Hz : NATURAL := 200000;
-    constant high_count_500Hz : NATURAL := div_factor_500Hz/2;
-    constant num_of_bits_500Hz : NATURAL := 18;
+    constant div_factor_500Hz : natural := 200000;
+    constant high_count_500Hz : natural := div_factor_500Hz/2;
+    constant num_of_bits_500Hz : natural := 18;
     
-    constant div_factor_4hz : NATURAL := 25000000;
-    constant high_count_4hz : NATURAL := div_factor_4hz/2;
-    constant num_of_bits_4hz : NATURAL := 25;
+    constant div_factor_4hz : natural := 25000000;
+    constant high_count_4hz : natural := div_factor_4hz/2;
+    constant num_of_bits_4hz : natural := 25;
 
-    constant div_factor_1hz : NATURAL := 100000000;
-    constant high_count_1hz : NATURAL := div_factor_1hz/2;
-    constant num_of_bits_1hz : NATURAL := 27;
+    constant div_factor_1hz : natural := 100000000;
+    constant high_count_1hz : natural := div_factor_1hz/2;
+    constant num_of_bits_1hz : natural := 27;
 
-    constant bcd_width : NATURAL := 8;
-    constant max_value_minutes : NATURAL := 60;
-    constant max_value_seconds : NATURAL := 59;
+    constant bcd_width : natural := 8;
+    constant max_value_minutes : natural := 60;
+    constant max_value_seconds : natural := 59;
 
-    Signal clk_500hz : STD_LOGIC;
-    Signal clk_4hz : STD_LOGIC;
-    Signal clk_1hz : STD_LOGIC;
-    Signal btnC_debounced : STD_LOGIC;
-    Signal btnU_debounced : STD_LOGIC;
-    Signal btnD_debounced : STD_LOGIC;
+    signal clk_500hz : std_logic;
+    signal clk_4hz : std_logic;
+    signal clk_1hz : std_logic;
+    signal btnC_debounced : std_logic;
+    signal btnU_debounced : std_logic;
+    signal btnD_debounced : std_logic;
 
-    Signal state_machine_out : STD_LOGIC_VECTOR (15 downto 0);
+    signal state_machine_out : std_logic_vector (15 downto 0);
 
-    Signal button_up_handle : STD_LOGIC;
-    Signal button_down_handle : STD_LOGIC;
+    signal button_up_handle : std_logic;
+    signal button_down_handle : std_logic;
 
 begin
 

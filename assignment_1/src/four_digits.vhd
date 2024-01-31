@@ -20,45 +20,45 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity four_digits is
-    Port ( d3 : in STD_LOGIC_VECTOR (3 downto 0);
-           d2 : in STD_LOGIC_VECTOR (3 downto 0);
-           d1 : in STD_LOGIC_VECTOR (3 downto 0);
-           d0 : in STD_LOGIC_VECTOR (3 downto 0);
-           ck : in STD_LOGIC;
-           seg : out STD_LOGIC_VECTOR (6 downto 0);
-           an : out STD_LOGIC_VECTOR (3 downto 0);
-           dp : out STD_LOGIC);
+    Port ( d3 : in std_logic_vector (3 downto 0);
+           d2 : in std_logic_vector (3 downto 0);
+           d1 : in std_logic_vector (3 downto 0);
+           d0 : in std_logic_vector (3 downto 0);
+           ck : in std_logic;
+           seg : out std_logic_vector (6 downto 0);
+           an : out std_logic_vector (3 downto 0);
+           dp : out std_logic);
 end four_digits;
 
 architecture Behavioral of four_digits is
-    Component decoder_2_4
-    port (
-        a : in STD_LOGIC_VECTOR (1 downto 0);
-        y : out STD_LOGIC_VECTOR (3 downto 0)
+    component decoder_2_4
+    Port (
+        a : in std_logic_vector (1 downto 0);
+        y : out std_logic_vector (3 downto 0)
     );
-    End Component;
+    end component;
 
-    Component mux4_1
-    port (
-        a : in STD_LOGIC_VECTOR (3 downto 0);
-        s : in STD_LOGIC_VECTOR (1 downto 0);
-        y : out STD_LOGIC
+    component mux4_1
+    Port (
+        a : in std_logic_vector (3 downto 0);
+        s : in std_logic_vector (1 downto 0);
+        y : out std_logic
     );
-    End Component;
+    end component;
 
-    Component one_digit
-    port (
-        digit : in STD_LOGIC_VECTOR (3 downto 0);
-        seg : out STD_LOGIC_VECTOR (6 downto 0)
+    component one_digit
+    Port (
+        digit : in std_logic_vector (3 downto 0);
+        seg : out std_logic_vector (6 downto 0)
     );
-    End Component;
+    end component;
 
-    Signal count: UNSIGNED (1 downto 0);
+    signal count: unsigned (1 downto 0);
 
-    Signal mux_out_1: STD_LOGIC;
-    Signal mux_out_2: STD_LOGIC;
-    Signal mux_out_3: STD_LOGIC;
-    Signal mux_out_4: STD_LOGIC;
+    signal mux_out_1: std_logic;
+    signal mux_out_2: std_logic;
+    signal mux_out_3: std_logic;
+    signal mux_out_4: std_logic;
 
 begin
     process(ck)
@@ -72,52 +72,52 @@ begin
         end if;
     end process;
 
-    U1: decoder_2_4 PORT MAP (
-        a => STD_LOGIC_VECTOR(count),
+    U1: decoder_2_4 Port map (
+        a => std_logic_vector(count),
         y => an
     );
 
     -- the first mux takes input d0(0), d1(0), d2(0), d3(0)
-    U2: mux4_1 PORT MAP (
+    U2: mux4_1 Port map (
         a(0) => d0(0),
         a(1) => d1(0),
         a(2) => d2(0),
         a(3) => d3(0),
-        s => STD_LOGIC_VECTOR(count),
+        s => std_logic_vector(count),
         y => mux_out_1
     );
 
     -- the second mux takes input d0(1), d1(1), d2(1), d3(1)
-    U3: mux4_1 PORT MAP (
+    U3: mux4_1 Port map (
         a(0) => d0(1),
         a(1) => d1(1),
         a(2) => d2(1),
         a(3) => d3(1),
-        s => STD_LOGIC_VECTOR(count),
+        s => std_logic_vector(count),
         y => mux_out_2
     );
 
     -- the third mux takes input d0(2), d1(2), d2(2), d3(2)
-    U4: mux4_1 PORT MAP (
+    U4: mux4_1 Port map (
         a(0) => d0(2),
         a(1) => d1(2),
         a(2) => d2(2),
         a(3) => d3(2),
-        s => STD_LOGIC_VECTOR(count),
+        s => std_logic_vector(count),
         y => mux_out_3
     );
 
     -- the fourth mux takes input d0(3), d1(3), d2(3), d3(3)
-    U5: mux4_1 PORT MAP (
+    U5: mux4_1 Port map (
         a(0) => d0(3),
         a(1) => d1(3),
         a(2) => d2(3),
         a(3) => d3(3),
-        s => STD_LOGIC_VECTOR(count),
+        s => std_logic_vector(count),
         y => mux_out_4
     );
 
-    U6: one_digit PORT MAP (
+    U6: one_digit Port map (
         digit(0) => mux_out_1,
         digit(1) => mux_out_2,
         digit(2) => mux_out_3,

@@ -20,40 +20,40 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity state_machine is
-    Port ( orig_clk : in STD_LOGIC; 
-           ck : in STD_LOGIC;
-           btnU, btnD : in STD_LOGIC;
-           btnC_debounced, btnU_debounced, btnD_debounced : in STD_LOGIC;
-           output : out STD_LOGIC_VECTOR (15 downto 0)
+    Port ( orig_clk : in std_logic; 
+           ck : in std_logic;
+           btnU, btnD : in std_logic;
+           btnC_debounced, btnU_debounced, btnD_debounced : in std_logic;
+           output : out std_logic_vector (15 downto 0)
         );
 end state_machine;
 
 architecture Behavioral of state_machine is
-    Signal bcd_counter_out_min : STD_LOGIC_VECTOR (7 downto 0);
-    Signal bcd_clock_min : STD_LOGIC := '0';
-    Signal bcd_up_down_min : STD_LOGIC := '0';
-    Signal bcd_cout_min : STD_LOGIC := '0';
-    Signal bcd_is_zero_min : STD_LOGIC := '0';
+    signal bcd_counter_out_min : std_logic_vector (7 downto 0);
+    signal bcd_clock_min : std_logic := '0';
+    signal bcd_up_down_min : std_logic := '0';
+    signal bcd_cout_min : std_logic := '0';
+    signal bcd_is_zero_min : std_logic := '0';
 
-    Signal bcd_counter_out_sec : STD_LOGIC_VECTOR (7 downto 0);
-    Signal bcd_clock_sec : STD_LOGIC := '0';
-    Signal bcd_up_down_sec : STD_LOGIC := '0';
-    Signal bcd_cout_sec : STD_LOGIC := '0';
-    Signal bcd_is_zero_sec : STD_LOGIC := '0';
+    signal bcd_counter_out_sec : std_logic_vector (7 downto 0);
+    signal bcd_clock_sec : std_logic := '0';
+    signal bcd_up_down_sec : std_logic := '0';
+    signal bcd_cout_sec : std_logic := '0';
+    signal bcd_is_zero_sec : std_logic := '0';
 
-    constant bcd_width : NATURAL := 8;
-    constant max_value_minutes : NATURAL := 60;
-    constant max_value_seconds : NATURAL := 59;
+    constant bcd_width : natural := 8;
+    constant max_value_minutes : natural := 60;
+    constant max_value_seconds : natural := 59;
 
-    Signal btn_reg : STD_LOGIC;
+    signal btn_reg : std_logic;
 
     type STATE is (STATE_SET, STATE_GO);
-    Signal CURRENT_STATE, NEXT_STATE: STATE := STATE_SET;
+    signal CURRENT_STATE, NEXT_STATE: STATE := STATE_SET;
 
-    Signal reset_signal : STD_LOGIC := '1';
-    Signal bcd_counter_sec_reset : STD_LOGIC := '1';
+    signal reset_signal : std_logic := '1';
+    signal bcd_counter_sec_reset : std_logic := '1';
 
-    Signal bcd_is_zero_sec_int : STD_LOGIC := '0';
+    signal bcd_is_zero_sec_int : std_logic := '0';
 begin
 
     SYNC_PROCESS: process(btnC_debounced, reset_signal)

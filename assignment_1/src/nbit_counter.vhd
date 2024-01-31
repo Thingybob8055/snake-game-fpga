@@ -20,18 +20,18 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity nbit_counter is
-    Generic (width  : NATURAL := 4;
-             modulo : NATURAL := 16);
-    Port ( clk    : in  STD_LOGIC;
-           cin    : in  STD_LOGIC;
-           negate : in  STD_LOGIC;
-           rst    : in  STD_LOGIC;
-           cout   : out STD_LOGIC;
-           output : out STD_LOGIC_VECTOR ((width-1) downto 0));
+    Generic (width  : natural := 4;
+             modulo : natural := 16);
+    Port ( clk    : in  std_logic;
+           cin    : in  std_logic;
+           negate : in  std_logic;
+           rst    : in  std_logic;
+           cout   : out std_logic;
+           output : out std_logic_vector ((width-1) downto 0));
 end nbit_counter;
 
 architecture Behavioral of nbit_counter is
-    Signal count : UNSIGNED (output'RANGE) := (others => '0');
+    signal count : unsigned (output'RANGE) := (others => '0');
 begin
     process(clk, rst)
     begin
@@ -47,6 +47,6 @@ begin
     end process;
 
     cout <= '1' when (cin = '1') and (count = (modulo-1)) else '0';
-    output <= STD_LOGIC_VECTOR(count) when negate = '0' else STD_LOGIC_VECTOR(not count);
+    output <= std_logic_vector(count) when negate = '0' else std_logic_vector(not count);
 
 end Behavioral;

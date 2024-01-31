@@ -17,8 +17,7 @@ entity button_handler is
     Port (
         clk : in std_logic;
         btn : in std_logic;
-        btn_press : out std_logic
-    );
+        btn_press : out std_logic);
 end button_handler;
 
 architecture Behavioral of button_handler is

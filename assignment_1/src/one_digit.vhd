@@ -20,8 +20,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity one_digit is
-    Port ( digit : in STD_LOGIC_VECTOR (3 downto 0);
-           seg : out STD_LOGIC_VECTOR (6 downto 0) );
+    Port ( digit : in std_logic_vector (3 downto 0);
+           seg : out std_logic_vector (6 downto 0) );
 end one_digit;
 
 architecture Behavioral of one_digit is

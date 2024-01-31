@@ -20,8 +20,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity decoder_2_4 is
-    Port ( a : in STD_LOGIC_VECTOR (1 downto 0);
-           y : out STD_LOGIC_VECTOR (3 downto 0));
+    Port ( a : in std_logic_vector (1 downto 0);
+           y : out std_logic_vector (3 downto 0));
 end decoder_2_4;
 
 architecture Behavioral of decoder_2_4 is
