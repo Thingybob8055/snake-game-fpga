@@ -6,6 +6,14 @@
 -- Target Devices: Digilent Basys 3 
 ----------------------------------------------------------------------------------
 
+---------------------------------------------------
+-- This module is the top level module for assignment 1.
+-- Takes the button and master clock as input and outputs to the cathods and anodes of the 7-segment display
+-- It instantiates the following modules: nb_clk_div, four_digits, button_debounce, state_machine, button_handler
+-- The clock dividers for 500Hz, 4Hz and 1Hz clocks
+-- The instantiated components are all port mapped and connected accordingly to complete the system
+---------------------------------------------------
+
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
