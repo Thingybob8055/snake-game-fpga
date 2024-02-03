@@ -6,9 +6,9 @@
 - [Basys3_Master.xdc](./Basys3_Master.xdc) - Edited constraints file for the project
 
 ## TO-DOs
-- [ ] Clean up code, remove unused and commented code
+- [x] Clean up code, remove unused and commented code
 - [x] Remove redundant I/O pins from [one_digit.vhd](./src/one_digit.vhd)
-- [ ] Add descriptive code comments for readability
-- [ ] Improve code consistency (e.g., capitalisation of keywords)
+- [x] Add descriptive code comments for readability
+- [x] Improve code consistency (e.g., capitalisation of keywords)
 - [x] Remove switches from the main top file: [main.vhd](./src/main.vhd)
 - [x] Extra: Button holding and accleration logic
