@@ -6,22 +6,17 @@
 -- Target Devices: Digilent Basys 3 
 ----------------------------------------------------------------------------------
 
+---------------------------------------------------
+-- This module takes a 4-bit input and outputs a 7-bit pattern to display the input digit on a 7-segment display
+-- It's a type of decoder
+---------------------------------------------------
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity one_digit is
-    Port ( digit : in std_logic_vector (3 downto 0);
-           seg : out std_logic_vector (6 downto 0) );
+    Port ( digit : in std_logic_vector (3 downto 0);   -- input digit
+           seg : out std_logic_vector (6 downto 0) );  -- 7-segment display cathode output
 end one_digit;
 
 architecture Behavioral of one_digit is
@@ -29,7 +24,7 @@ architecture Behavioral of one_digit is
 begin
     process(digit)
     begin
-    case digit is
+    case digit is  -- outout the 7-segment display bit pattern for the input digit
         when "0000" => seg <= "1000000"; -- 0
         when "0001" => seg <= "1001111"; -- 1
         when "0010" => seg <= "0100100"; -- 2

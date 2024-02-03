@@ -6,8 +6,10 @@
 -- Target Devices: Digilent Basys 3 
 ----------------------------------------------------------------------------------
 
--- when a button is held down, the module will convert it into multiple pulses of inreasing frequency
--- So that a counter will increment at an increasing rate when the button is held down. Just like a 7 segment display on a stopwatch
+---------------------------------------------------
+-- This module is to handle the button press and
+-- To generate a pulse when the button is pressed or held down
+---------------------------------------------------
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -15,41 +17,38 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity button_handler is 
     Port (
-        clk : in std_logic;
-        btn : in std_logic;
-        btn_press : out std_logic);
+        clk : in std_logic;          -- clock input (100MHz)
+        btn : in std_logic;          --  debounced button input
+        btn_press : out std_logic);  -- pulse output when button is pressed
 end button_handler;
 
 architecture Behavioral of button_handler is
-    constant no_of_thresholds_to_increment : integer := 15;
+    constant no_of_thresholds_to_increment : integer := 15; -- how many thresholds to increment the multiplier (incease the speed)
 begin
-    -- if button value is 1, then a counter increments and outputs a pulse to the btn_press output, which is a pulse of 200ms
-    -- if button value is 0, then the counter is reset to 0 and the output is 0
-    -- the clk is a 100MHz clock, so the counter increments at a rate of 100MHz
     process(clk, btn)
-        variable counter : integer := 0;
-        variable no_of_thresholds : integer := 0;
-        variable multiplier : integer := 1;
+        variable counter : integer := 0;          -- counter to count the number of clock cycles
+        variable no_of_thresholds : integer := 0; -- counter to count the number of thresholds
+        variable multiplier : integer := 1;       -- multiplier to increase the speed
     begin
         if rising_edge(clk) then
-            if btn = '1' then
-                counter := counter + multiplier;
-                if counter = 20000000 then
-                    counter := 0;
-                    no_of_thresholds := no_of_thresholds + 1;
+            if btn = '1' then   -- button is pressed
+                counter := counter + multiplier;  -- increment the counter
+                if counter = 20000000 then  -- 20000000 clock cycles = 200ms
+                    counter := 0;  -- reset the counter
+                    no_of_thresholds := no_of_thresholds + 1;  -- increment the threshold counter
                     if no_of_thresholds = no_of_thresholds_to_increment then
                         -- cap the multiplier at 2
                         if multiplier < 2 then
-                            multiplier := multiplier + 1;
+                            multiplier := multiplier + 1;  -- increase the multiplier
                         end if;
-                        no_of_thresholds := 0;
+                        no_of_thresholds := 0;   -- reset the threshold counter
                     end if;
-                    btn_press <= '1';
+                    btn_press <= '1';   -- generate a pulse
                 else
                     btn_press <= '0';
                 end if;
             else
-                counter := 0;
+                counter := 0;    -- reset the all values when button is not pressed
                 no_of_thresholds := 0;
                 multiplier := 1;
                 btn_press <= '0';

@@ -12,41 +12,41 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity main is
     Port (
-        clk  : in  std_logic;
-        btnU, btnD,  btnC  : in  std_logic;
-        seg  : out std_logic_vector (6 downto 0);
-        dp   : out std_logic;
-        an   : out std_logic_vector (3 downto 0));
+        clk  : in  std_logic;                       -- 100MHz clock from Basys 3 board
+        btnU, btnD,  btnC  : in  std_logic;         -- push buttons from Basys 3 board
+        seg  : out std_logic_vector (6 downto 0);   -- 7-segment display on Basys 3 board
+        dp   : out std_logic;                       -- decimal point on Basys 3 board
+        an   : out std_logic_vector (3 downto 0));  -- Anodes for the 7-segment display
 end main;
 
 architecture Behavioral of main is
-    constant div_factor_500Hz : natural := 200000;
-    constant high_count_500Hz : natural := div_factor_500Hz/2;
-    constant num_of_bits_500Hz : natural := 18;
+    constant div_factor_500Hz : natural := 200000;              -- 100MHz/200000 = 500Hz
+    constant high_count_500Hz : natural := div_factor_500Hz/2;  -- 50% duty cycle
+    constant num_of_bits_500Hz : natural := 18;                 -- 18 bits needed to count to 200000
     
-    constant div_factor_4hz : natural := 25000000;
-    constant high_count_4hz : natural := div_factor_4hz/2;
-    constant num_of_bits_4hz : natural := 25;
+    constant div_factor_4hz : natural := 25000000;              -- 100MHz/25000000 = 4Hz
+    constant high_count_4hz : natural := div_factor_4hz/2;      -- 50% duty cycle
+    constant num_of_bits_4hz : natural := 25;                   -- 25 bits needed to count to 25000000
 
-    constant div_factor_1hz : natural := 100000000;
-    constant high_count_1hz : natural := div_factor_1hz/2;
-    constant num_of_bits_1hz : natural := 27;
+    constant div_factor_1hz : natural := 100000000;             -- 100MHz/100000000 = 1Hz
+    constant high_count_1hz : natural := div_factor_1hz/2;      -- 50% duty cycle
+    constant num_of_bits_1hz : natural := 27;                   -- 27 bits needed to count to 100000000
 
-    constant bcd_width : natural := 8;
-    constant max_value_minutes : natural := 60;
-    constant max_value_seconds : natural := 59;
+    constant bcd_width : natural := 8;                          -- 8 bits for BCD representation
+    constant max_value_minutes : natural := 60;                 -- 60 minutes
+    constant max_value_seconds : natural := 59;                 -- 59 seconds
 
-    signal clk_500hz : std_logic;
-    signal clk_4hz : std_logic;
-    signal clk_1hz : std_logic;
-    signal btnC_debounced : std_logic;
-    signal btnU_debounced : std_logic;
-    signal btnD_debounced : std_logic;
+    signal clk_500hz : std_logic;                               -- 500Hz clock output from the clock divider
+    signal clk_4hz : std_logic;                                 -- 4Hz clock output from the clock divider
+    signal clk_1hz : std_logic;                                 -- 1Hz clock output from the clock divider
+    signal btnC_debounced : std_logic;                          -- debounced btnC signal
+    signal btnU_debounced : std_logic;                          -- debounced btnU signal
+    signal btnD_debounced : std_logic;                          -- debounced btnD signal
 
-    signal state_machine_out : std_logic_vector (15 downto 0);
+    signal state_machine_out : std_logic_vector (15 downto 0);  -- output from the state machine
 
-    signal button_up_handle : std_logic;
-    signal button_down_handle : std_logic;
+    signal button_up_handle : std_logic;                        -- signal to handle the button press
+    signal button_down_handle : std_logic;                      -- signal to handle the button press
 
 begin
 
