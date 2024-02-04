@@ -4,11 +4,16 @@
 - [src](./src/) - Contains all source files for the design
 - [tb](./tb/) - Relevant test benches for unit testing
 - [Basys3_Master.xdc](./Basys3_Master.xdc) - Edited constraints file for the project
+- [images](./images) - Images for this README file
 
-## TO-DOs
-- [x] Clean up code, remove unused and commented code
-- [x] Remove redundant I/O pins from [one_digit.vhd](./src/one_digit.vhd)
-- [x] Add descriptive code comments for readability
-- [x] Improve code consistency (e.g., capitalisation of keywords)
-- [x] Remove switches from the main top file: [main.vhd](./src/main.vhd)
-- [x] Extra: Button holding and accleration logic
+## Design Overview
+
+![schematic](./images/schematic.png)
+
+## Compiling the project
+
+- Create a new project in Vivado
+- Select all files `.vhd` from the [src](./src) folder as the design sources
+- Select [Basys3_Master.xdc](./Basys3_Master.xdc) as the constraints file
+- Synthesise, implement and Generate Bitstream using Vivado
+- Enjoy!
