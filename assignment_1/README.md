@@ -28,5 +28,5 @@
 - Create a new project in Vivado
 - Select all files `.vhd` from the [src](./src) folder as the design sources
 - Select [Basys3_Master.xdc](./Basys3_Master.xdc) as the constraints file
-- Synthesise, implement and Generate Bitstream using Vivado
+- Synthesise, Implement and Generate Bitstream using Vivado
 - Enjoy!
