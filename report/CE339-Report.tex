@@ -1,0 +1,177 @@
+\documentclass[aps, secnumarabic, balancelastpage, asmath, amssymb, nofootinbib, floatfix,]{revtex4-2}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{siunitx}
+\usepackage[export]{adjustbox}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{multirow}
+% \usepackage[table,xcdraw]{xcolor}
+\usepackage{xcolor}
+\usepackage{cprotect}
+\usepackage{verbatimbox}
+\usepackage{listings}
+\usepackage{xparse}
+\usepackage{listings}
+%\usepackage{times}
+\NewDocumentCommand{\codeword}{v}{%
+\texttt{\textcolor{black}{#1}}%
+}
+
+\hypersetup{colorlinks=true, pdfstartview=FitV, linkcolor=blue, citecolor=black, plainpages=false, pdfpagelabels=true, urlcolor=black}
+
+\setlength{\arrayrulewidth}{0.3mm}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.5}
+\graphicspath{{./image/}}
+
+\usepackage{setspace}
+\usepackage{titletoc}
+%\contentsmargin{2.55em}
+\dottedcontents{chapter}[1.5em]{}{2.3em}{1pc}
+\dottedcontents{section}[1.5em]{}{1.7em}{0.5pc}
+\dottedcontents{subsection}[3.9em]{}{2.4em}{0.5pc}
+\dottedcontents{subsubsection}[6.6em]{}{2.7em}{0.5pc}
+\dottedcontents{paragraph}[9.5em]{}{1.9em}{0.5pc}
+
+\usepackage{etoolbox}
+\makeatletter
+\pretocmd{\chapter}{addtocontents{toc}{\protect\addvspace{15\p@}}}{}{}
+\pretocmd{\section}{\addtocontents{toc}{\protect\addvspace{9\p@}}}{}{}
+%\pretocmd{\subsection}{\addtocontents{toc}{\protect\addvspace{15\p@}}}{}{}
+\makeatother
+
+
+\stepcounter{secnumdepth}
+\stepcounter{tocdepth}
+
+% Usual (decimal) numbering
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% Fix references
+\makeatletter
+\renewcommand{\p@subsection}{}
+\renewcommand{\p@subsubsection}{}
+\makeatother
+
+\lstset
+{ %Formatting for code in appendix
+    basicstyle=\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+    %basicstyle=\ttfamily,
+    %columns=fullflexible,
+    frame=single,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    numbersep=5pt,
+}
+
+\begin{document}
+%top matter
+    \begin{titlepage}
+   \begin{center}
+       \vspace*{1cm}
+
+	\Huge
+       \textbf{CE339 - High Level Digital Design}
+
+       \vspace{0.5cm}
+       
+       \LARGE
+        \textbf{Assignment 2 -- ``Snake'' Video Game}
+            
+       \vspace{1.5cm}
+
+       \textbf{Akshay Gopinath}\\
+       \textbf{Registration Number: 2005614}
+
+       \vfill
+        \begin{figure}[h]
+        
+        \includegraphics[scale = 0.85]{University}
+        
+   	\end{figure}
+        \vfill
+            
+       A report presented for the degree of\\
+       Electronic Engineering
+            
+       \vspace{1cm}
+     
+            
+       School of Computer Science and Electronic Engineering\\
+       University of Essex\\
+       England\\
+       \today
+
+   \end{center}
+\end{titlepage}
+
+%\thispagestyle{plain}
+%\Large
+%\textbf{Contributions}
+
+%\clearpage
+
+\thispagestyle{plain}
+\begin{center}
+    \Large
+    \textbf{CE339 - High Level Digital Design}
+        
+    \vspace{0.4cm}
+    \large
+    \textbf{Assignment 2 -- ``Snake'' Video Game}
+        
+    \vspace{0.4cm}
+    \textbf{Akshay Gopinath}
+       
+    %\vspace{0.9cm}
+    \section*{Abstract}
+    \fontsize{11pt}{12pt}\selectfont
+    
+\end{center}
+\fontsize{11pt}{12pt}\selectfont
+{
+\setlength{\parindent}{0pt}
+
+
+}
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\listoffigures
+\clearpage
+
+\listoftables
+
+\clearpage
+
+
+\section{\fontsize{11.3pt}{12pt}\selectfont \bf Introduction}
+\fontsize{11pt}{12pt}\selectfont
+\label{sec:1}
+
+{
+\setlength{\parindent}{0pt}
+
+This report documents an experiment to design a ``Snake'' Video Game on hardware using a Hardware Description Language (HDL) called VHDL (Very High Speed Integrated Circuit Hardware Design Language). The target platform is the Digilent Basys3 Board which houses an Artix-7 based FPGA[1]. The VHDL code is synthesised using Xilinx Vivado. The VGA (Video Graphics Array) port on the Basys3 board is used to display the game on a compatible monitor and the player score is shown on the 7-segment display. This report will explain the design in a top-down approach, whilst going into detail on every sub-components. The top level schematic will generate the necessary signals required to correctly display the game and the score, such as the VGA synchronisation signals, RGB (red, green, blue) colour signals and the 7-segment display cathode and anode signals.
+
+
+}
+
+\end{document}
+
+%% [1] https://digilent.com/reference/programmable-logic/basys-3/start

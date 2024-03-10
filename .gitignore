@@ -2,3 +2,15 @@ assignment_1_vivado/
 23-24_CE339_gopinath_akshay.code-workspace
 *.txt
 *.zip
+CE339-ReportNotes.bib
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
