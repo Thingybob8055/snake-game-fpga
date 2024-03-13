@@ -130,17 +130,17 @@ begin
                             size <= size + SIZE_INCREMENT;
                         end if;
 
-                   elsif (snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) then
-                       game_over <= '1';
-                   -- detect if hit border level 2
-                   elsif switch(0) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or ((snakeX(0) = 10) and (snakeY(0) >= 10 and snakeY(0) <= 20)) or ((snakeX(0) = 69) and (snakeY(0) >= 39 and snakeY(0) <= 49)) or ((snakeY(0) = 10) and (snakeX(0) >= 10 and snakeX(0) <= 20)) or ((snakeY(0) = 49) and (snakeX(0) >= 59 and snakeX(0) <= 69))) then
-                       game_over <= '1';
+--                    elsif (snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) then
+--                        game_over <= '1';
+--                    -- detect if hit border level 2
+--                    elsif switch(0) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or ((snakeX(0) = 10) and (snakeY(0) >= 10 and snakeY(0) <= 20)) or ((snakeX(0) = 69) and (snakeY(0) >= 39 and snakeY(0) <= 49)) or ((snakeY(0) = 10) and (snakeX(0) >= 10 and snakeX(0) <= 20)) or ((snakeY(0) = 49) and (snakeX(0) >= 59 and snakeX(0) <= 69))) then
+--                        game_over <= '1';
 
-                   elsif (switch(1) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or((snakeY(0) = 20) and (snakeX(0) >= 10 and snakeX(0) <= 69)) or ((snakeY(0) =40 ) and (snakeX(0) >= 10 and snakeX(0) <= 69)))) then
-                       game_over <= '1';
+--                    elsif (switch(1) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or((snakeY(0) = 20) and (snakeX(0) >= 10 and snakeX(0) <= 69)) or ((snakeY(0) =40 ) and (snakeX(0) >= 10 and snakeX(0) <= 69)))) then
+--                        game_over <= '1';
 
-                   elsif (switch(2) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or ((snakeX(0) = 39) and (snakeY(0) >= 0 and snakeY(0) <=10)) or ((snakeX(0) = 39) and (snakeY(0) >= 49 and  snakeY(0)<=59)))) then
-                       game_over <= '1';
+--                    elsif (switch(2) = '1' and ((snakeX(0) = 0) or (snakeX(0) = 79) or (snakeY(0) = 0) or (snakeY(0) = 59) or ((snakeX(0) = 39) and (snakeY(0) >= 0 and snakeY(0) <=10)) or ((snakeX(0) = 39) and (snakeY(0) >= 49 and  snakeY(0)<=59)))) then
+--                        game_over <= '1';
                     
                      elsif border = '1' and snakeBody(0) = '1' then
                          game_over <= '1';
