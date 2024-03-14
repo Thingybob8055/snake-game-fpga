@@ -64,6 +64,26 @@ architecture Behavioral of snake is
     signal up, down, left, right : std_logic;
 
     signal grid : std_logic;
+
+    type rom_type is array (0 to 15) of std_logic_vector(0 to 15);
+    constant ROM : rom_type := 
+    (
+        "0000011111100000",
+        "0001110101011000",
+        "0010000010101100",
+        "0110000000010110",
+        "1000000000010011",
+        "1000000000101111",
+        "1000000000010101",
+        "1000000001010011",
+        "1010100001010111",
+        "1010101010111011",
+        "0101010101001010",
+        "0111010111110110",
+        "0011101101011100",
+        "0001111011111000",
+        "0000011111100000"
+    );
     
 begin
     led <= switch;
@@ -225,7 +245,8 @@ begin
         if rising_edge(clk_100mhz) then
         if pixel_clk = '1' then
             if (xCount(9 downto 3) = pearX) and (yCount(9 downto 3) = pearY) then
-                pear <= '1';
+                -- disolay the bitmap rom defined in the constant ROM
+                pear <= ROM(to_integer(unsigned(yCount(9 downto 3))), to_integer(unsigned(xCount(9 downto 3))));
             else
                 pear <= '0';
             end if;
