@@ -61,6 +61,10 @@ architecture Behavioral of snake is
 
     signal start : std_logic;
 
+    signal up, down, left, right : std_logic;
+
+    signal grid : std_logic;
+    
 begin
     led <= switch;
     start <= switch(7);
@@ -88,6 +92,9 @@ begin
     update_clk : entity work.updateClk(Behavioral)
         Generic map (max_value => 4000000)
         Port map (clk_100mhz => clk_100mhz, update => update);
+
+    up_sig : entity work.Debounce(Behavioral)
+        Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);    
 
     process(clk_100mhz)
     begin
