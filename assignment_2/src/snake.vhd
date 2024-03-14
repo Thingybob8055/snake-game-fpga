@@ -174,13 +174,13 @@ begin
     begin
         if rising_edge(clk_100mhz) then
             if pixel_clk = '1' then
-            if (btn_up = '1' and direction /= "0010") then
+            if (up = '1' and direction /= "0010") then
                 direction <= "0001";
-            elsif (btn_down = '1' and direction /= "0001") then
+            elsif (down = '1' and direction /= "0001") then
                 direction <= "0010";
-            elsif (btn_left = '1' and  direction /= "1000") then
+            elsif (left = '1' and  direction /= "1000") then
                 direction <= "0100";
-            elsif (btn_right  = '1' and direction /= "0100") then
+            elsif (right  = '1' and direction /= "0100") then
                 direction <= "1000";
             end if;
             end if;
