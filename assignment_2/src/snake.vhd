@@ -94,7 +94,16 @@ begin
         Port map (clk_100mhz => clk_100mhz, update => update);
 
     up_sig : entity work.Debounce(Behavioral)
-        Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);    
+        Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);
+
+    down_sig : entity work.Debounce(Behavioral)
+        Port map (clk => pixel_clk, rst => '0', noisy => btn_down, button_debounced => down);
+
+    left_sig : entity work.Debounce(Behavioral)
+        Port map (clk => pixel_clk, rst => '0', noisy => btn_left, button_debounced => left);
+
+    right_sig : entity work.Debounce(Behavioral)
+        Port map (clk => pixel_clk, rst => '0', noisy => btn_right, button_debounced => right);
 
     process(clk_100mhz)
     begin
