@@ -72,6 +72,7 @@ architecture Behavioral of snake is
         "0001110101011000",
         "0010000010101100",
         "0110000000010110",
+        "0100000001010110",
         "1000000000010011",
         "1000000000101111",
         "1000000000010101",
@@ -84,6 +85,12 @@ architecture Behavioral of snake is
         "0001111011111000",
         "0000011111100000"
     );
+
+    constant img_size_x : unsigned(9 downto 0) := to_unsigned(16, 10);
+    constant img_size_y : unsigned(9 downto 0) := to_unsigned(16, 10);
+
+    signal is_img_painted : std_logic;
+    signal img_clr : std_logic;
     
 begin
     led <= switch;
@@ -246,7 +253,9 @@ begin
         if pixel_clk = '1' then
             if (xCount(9 downto 3) = pearX) and (yCount(9 downto 3) = pearY) then
                 -- pear <= '1';
-                pear <= ROM(to_integer(pearY(6 downto 3)), to_integer(pearX(6 downto 3)));
+                -- pear <= ROM(to_integer(yCount(9 downto 3))) (to_integer(xCount(9 downto 3)));
+                is_img_painted <= '1' when (xCount >= img_x and xCount < img_x + img_size_x and yCount >= img_y and yCoount < img_y + img_size_y) else '0';
+
             else
                 pear <= '0';
             end if;
