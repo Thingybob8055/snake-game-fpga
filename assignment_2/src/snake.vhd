@@ -1785,6 +1785,18 @@ architecture Behavioral of snake is
 
 	);
 
+	type color_sprite_8 is array (0 to 7, 0 to 7) of std_logic_vector(0 to 11);
+	constant SNAKE_ROM : color_sprite_8 := (
+		("010101100010","011010000010","011010000010","011010000010","011010000010","011010000010","011010000010","001001010001"),
+		("011010000010","010011000001","001110110001","001110110001","001110110001","001110110001","001110110001","001001100001"),
+		("011010000010","001110110001","000110100001","000110100000","000110100000","000110100001","000110100000","001001100001"),
+		("011010000010","001110110001","000101110001","001010100001","001010100001","001001110001","001010100001","001001100001"),
+		("011010000010","001110110001","000110100001","001010010001","001010010001","001010100001","001010110000","001001100001"),
+		("011010000010","001110110001","000110100001","001010100001","001010100001","001010100001","001010110000","001001100001"),
+		("011010000010","001110110001","000110110000","001010110000","001010110000","001010110000","001010110000","001001100001"),
+		("001001010001","001001100001","001001100001","001001100001","001001100001","001001100001","001001100001","000101010001")
+	);
+
 --    vgaRed <= COLOR_ROM(row, col)(11 downto 8);
 
     constant img_size_x : natural := 16;
@@ -1801,6 +1813,8 @@ architecture Behavioral of snake is
     signal current_frame_gif : unsigned(11 downto 0) := to_unsigned(0, 12);
 
     signal brick_clr : std_logic_vector(11 downto 0);
+
+	signal snake_clr : std_logic_vector(11 downto 0); -- snake colour signal
 begin
     led <= switch;
     start <= switch(7);
@@ -1822,6 +1836,8 @@ begin
     img_clr <= apple_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
 
     brick_clr <= BRICK_ROM((to_integer(yCount) mod 16),(to_integer(xCount) mod 16)) when border = '1' else (others => '0');
+
+	snake_clr <= SNAKE_ROM((to_integer(yCount) mod 8),(to_integer(xCount) mod 8)) when snakeBody /= (127 downto 0 => '0') else (others => '0');
 
     vga_controller : entity work.vga_controller_640_60(Behavioral)
         Port map (rst => '0', pixel_clk => pixel_clk, HS => hsync, VS => vsync, hcount => xCount, vcount => yCount, blank => display);
@@ -1995,7 +2011,7 @@ begin
     
     rgb <= (others => '0') when display = '1' else 
            "111100000000" when game_over = '1' else
-           "000011110000" when (snakeBody /= (127 downto 0 => '0')) else
+           snake_clr when (snakeBody /= (127 downto 0 => '0')) else
            brick_clr when border = '1' else 
            img_clr;
 
