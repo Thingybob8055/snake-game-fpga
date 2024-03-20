@@ -245,8 +245,8 @@ begin
         if rising_edge(clk_100mhz) then
         if pixel_clk = '1' then
             if (xCount(9 downto 3) = pearX) and (yCount(9 downto 3) = pearY) then
-                -- disolay the bitmap rom defined in the constant ROM
-                pear <= ROM(to_integer(unsigned(yCount(9 downto 3))), to_integer(unsigned(xCount(9 downto 3))));
+                -- pear <= '1';
+                pear <= ROM(to_integer(pearY(6 downto 3)), to_integer(pearX(6 downto 3)));
             else
                 pear <= '0';
             end if;
