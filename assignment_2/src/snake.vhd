@@ -106,7 +106,7 @@ architecture Behavioral of snake is
         ("000000000000","000000000000","000000000000","000000000000","100000100010","100100100010","101100100010","101000100010","101000100010","101000100010","100100100010","100100100010","100000100010","000000000000","000000000000","000000000000")
     );
     
-    constant COLOR_ROM : color_sprite := (
+    constant BRICK_ROM : color_sprite := (
         ("000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000"),
         ("000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000"),
         ("000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000"),
@@ -137,6 +137,9 @@ architecture Behavioral of snake is
     signal img_y : unsigned(10 downto 0) := to_unsigned(50, 11);
     
     signal rgb : std_logic_vector(11 downto 0);
+
+    signal is_brick_painted : std_logic;
+    signal brick_clr : std_logic_vector(11 downto 0);
 begin
     led <= switch;
     start <= switch(7);
@@ -145,6 +148,8 @@ begin
 --    img_clr <= ROM((yCount - img_y) mod img_size_y)((xCount - img_x) mod img_size_x) when is_img_painted = '1' else '0';
     img_clr <= COLOR_ROM((to_integer(yCount - img_y) mod img_size_y),(to_integer(xCount - img_x)) mod img_size_x) when is_img_painted = '1' else (others => '0');
 
+
+    brick_clr <= BRICK_ROM((to_integer(yCount) mod 16),(to_integer(xCount) mod 16)) when border = '1' else (others => '0');
 
     vga_controller : entity work.vga_controller_640_60(Behavioral)
         Port map (rst => '0', pixel_clk => pixel_clk, HS => hsync, VS => vsync, hcount => xCount, vcount => yCount, blank => display);
@@ -217,7 +222,8 @@ begin
                             size <= size + SIZE_INCREMENT;
                         end if;
                     
-                    elsif border = '1' and snakeBody(0) = '1' then
+                    -- elsif border = '1' and snakeBody(0) = '1' then
+                    elsif brick_clr /= "000000000000" and snakeBody(0) = '1' then
                          game_over <= '1';
                     
                     elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then
@@ -317,7 +323,7 @@ begin
     rgb <= (others => '0') when display = '1' else 
            "111100000000" when game_over = '1' else
            "000011110000" when (snakeBody /= (127 downto 0 => '0')) else
-           "000000001111" when border = '1' else 
+           brick_clr when border = '1' else 
            img_clr;
 
 --    vgared <= "1111" when (display = '0' and (img_clr /= "000000000000" or game_over = '1')) else "0000";
