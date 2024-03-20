@@ -1,91 +1,63 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
-use ieee.math_real.all;
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 
 entity snake is
-    Port ( clk_100mhz : in STD_LOGIC;
-           switch : in STD_LOGIC_VECTOR(7 downto 0);
-           btn_up : in STD_LOGIC;
-           btn_enter : in STD_LOGIC;
-           btn_left : in STD_LOGIC;
-           btn_right : in STD_LOGIC;
-           btn_down : in STD_LOGIC;
-           led : out STD_LOGIC_VECTOR(7 downto 0);
-           vgared : out STD_LOGIC_VECTOR(3 downto 0);
-           vgagreen : out STD_LOGIC_VECTOR(3 downto 0);
-           vgablue : out STD_LOGIC_VECTOR(3 downto 0);
-           hsync : out STD_LOGIC;
-           vsync : out STD_LOGIC
+    Port ( clk_100mhz : in STD_LOGIC;					--  master clock 100MHz
+           switch : in STD_LOGIC_VECTOR(7 downto 0);	-- switches 0-7
+           btn_up : in STD_LOGIC;						-- up button
+           btn_enter : in STD_LOGIC;					-- enter button
+           btn_left : in STD_LOGIC;						-- left button
+           btn_right : in STD_LOGIC;					-- right button
+           btn_down : in STD_LOGIC;						-- down button
+           led : out STD_LOGIC_VECTOR(7 downto 0);		-- leds 0-7
+           vgared : out STD_LOGIC_VECTOR(3 downto 0);	-- vga red
+           vgagreen : out STD_LOGIC_VECTOR(3 downto 0);	-- vga green
+           vgablue : out STD_LOGIC_VECTOR(3 downto 0);	-- vga blue
+           hsync : out STD_LOGIC;						-- horizontal sync
+           vsync : out STD_LOGIC;						-- vertical sync
+		   seg  : out std_logic_vector (6 downto 0); 	-- 7-segment display
+           dp   : out std_logic; 						-- 7-segment display decimal point
+           an   : out std_logic_vector (3 downto 0)		-- 7-segment display anodes
          );
 end snake;
 
 architecture Behavioral of snake is
-    signal pixel_clk : STD_LOGIC;
+    signal pixel_clk : STD_LOGIC;   -- pixel clock
 
-    constant SIZE_INCREMENT : integer := 4;
+    constant SIZE_INCREMENT : integer := 4;   -- size increment for the snake body
     
-    signal xCount : unsigned(10 downto 0);
-    signal yCount : unsigned(10 downto 0);
-    signal rand_X : unsigned(6 downto 0);
-    signal rand_Y : unsigned(6 downto 0);
-    signal size : unsigned(6 downto 0);
-    signal pearX : unsigned(6 downto 0) := "0101000";
+    signal xCount : unsigned(10 downto 0);	-- x position from horizontal counter of vga driver
+    signal yCount : unsigned(10 downto 0);  -- y position from vertical counter of vga driver
+    signal rand_X : unsigned(6 downto 0);   -- x random position for the food
+    signal rand_Y : unsigned(6 downto 0);	-- y random position for the foodq
+    signal size : unsigned(6 downto 0);	    -- keep track of the size of the snake
+    signal pearX : unsigned(6 downto 0) := "0101000"; 
     signal pearY : unsigned(6 downto 0) := "0001010";
-    signal display : std_logic;
+    signal display : std_logic;  -- display signal to enable rgb when blanking is off
     signal R : std_logic;
     signal G : std_logic;
     signal B : std_logic;
-    signal game_over : std_logic;
-    signal pear, border : std_logic;
+    signal game_over : std_logic;  -- signal to indicate game over
+    signal pear, border : std_logic; -- signal to draw border and food
 
-    type snake_array is array (0 to 127) of unsigned(6 downto 0);
+    type snake_array is array (0 to 127) of unsigned(6 downto 0);  -- array to keep track of the snake body
     -- type snakeY_array is array (0 to 127) of unsigned(6 downto 0);
 
-    signal snakeX : snake_array;
-    signal snakeY : snake_array;
+    signal snakeX : snake_array;	-- snake x positions
+    signal snakeY : snake_array;	-- snake y positions
 
-    signal snakeBody : unsigned(127 downto 0);
-    signal update : std_logic;
-    signal direction : std_logic_vector(3 downto 0);
+    signal snakeBody : unsigned(127 downto 0);  -- vector to render the snake body
+    signal update : std_logic;   -- update clock signal
+    signal direction : std_logic_vector(3 downto 0);  -- snake movement direction
 
-    signal count : integer;
+    signal count : integer;  -- counter to keep track of the snake body in the for loops
 
-    signal start : std_logic;
+    signal start : std_logic;  -- signal to start the game
 
-    signal up, down, left, right : std_logic;
-
-    signal grid : std_logic;
-
-    type rom_type is array (0 to 15) of std_logic_vector(0 to 15);
-    constant ROM : rom_type := 
-    (
-        "0000011111100000",
-        "0001110101011000",
-        "0010000010101100",
-        "0110000000010110",
-        "0100000001010110",
-        "1000000000010011",
-        "1000000000101111",
-        "1000000000010101",
-        "1000000001010011",
-        "1010100001010111",
-        "1010101010111011",
-        "0101010101001010",
-        "0111010111110110",
-        "0011101101011100",
-        "0001111011111000",
-        "0000011111100000"
-    );
+    signal up, down, left, right : std_logic;  -- debounced signals for the buttons
     
+	-- rick astley never gonna give you up GIF
     type color_gif_sprite is array (0 to 31, 0 to 47, 0 to 26) of std_logic_vector(0 to 11);
 	constant COLOR_GIF_ROM : color_gif_sprite := (
 
@@ -1722,6 +1694,7 @@ architecture Behavioral of snake is
 
 	);
 
+	-- brick sprite
     type color_sprite is array (0 to 15, 0 to 15) of std_logic_vector(0 to 11);
 
     constant BRICK_ROM : color_sprite := (
@@ -1742,9 +1715,10 @@ architecture Behavioral of snake is
         ("000000000000","001000000000","010000000000","010000000000","000100000000","001000000000","010000000000","010000000000","010000000000","010000000000","001000000000","000100000000","010000000000","010000000000","001000000000","000000000000"),
         ("000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000")
     );
-    
+
+	-- apple gif sprite
 	type apple_gif_sprite is array (0 to 1, 0 to 15, 0 to 15) of std_logic_vector(0 to 11);
-	constant apple_GIF_ROM : apple_gif_sprite := (
+	constant APPLE_GIF_ROM : apple_gif_sprite := (
 
 		(	("000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000","000000000000"),
 		("000000000000","000000000000","110010100010","000000000000","000000000000","000000000000","000000000000","000000000000","110010100010","000000000000","000000000000","000000000000","000000000000","110010100010","000000000000","000000000000"),
@@ -1785,6 +1759,7 @@ architecture Behavioral of snake is
 
 	);
 
+	-- snale body sprite
 	type color_sprite_8 is array (0 to 7, 0 to 7) of std_logic_vector(0 to 11);
 	constant SNAKE_ROM : color_sprite_8 := (
 		("010101100010","011010000010","011010000010","011010000010","011010000010","011010000010","011010000010","001001010001"),
@@ -1799,27 +1774,47 @@ architecture Behavioral of snake is
 
 --    vgaRed <= COLOR_ROM(row, col)(11 downto 8);
 
-    constant img_size_x : natural := 16;
+    constant img_size_x : natural := 16; -- size of the image sprites
     constant img_size_y : natural := 16;
 
-    signal is_img_painted : std_logic;
+    signal is_img_painted : std_logic;		-- is the rick gif painted
     signal img_clr : std_logic_vector(11 downto 0);
 
-    signal img_x : unsigned(10 downto 0) := to_unsigned(50, 11);
+    signal img_x : unsigned(10 downto 0) := to_unsigned(50, 11); -- position of rick gif
     signal img_y : unsigned(10 downto 0) := to_unsigned(50, 11);
     
-    signal rgb : std_logic_vector(11 downto 0);
+    signal rgb : std_logic_vector(11 downto 0); -- 12 bit rbg signal
     
-    signal current_frame_gif : unsigned(11 downto 0) := to_unsigned(0, 12);
+    signal current_frame_gif : unsigned(11 downto 0) := to_unsigned(0, 12); -- the current gif frame from the array
 
-    signal brick_clr : std_logic_vector(11 downto 0);
+    signal brick_clr : std_logic_vector(11 downto 0);  -- brick colour sognal
+
+	signal generate_random : std_logic;
 
 	signal snake_clr : std_logic_vector(11 downto 0); -- snake colour signal
+
+	signal bcd_counter_out_1 : std_logic_vector(7 downto 0);  -- signals for the bcd counters
+	signal bcd_counter_out_2 : std_logic_vector(7 downto 0);
+	signal clk_500hz : std_logic;
+	signal bcd_counter_1_cout : std_logic;
+	signal bcd_counter_1_clk : std_logic;
+	signal bcd_counter_2_clk : std_logic;
+	signal increment_score : std_logic;
+	signal bcd_counter_1_reset : std_logic;
+	signal bcd_counter_2_reset : std_logic;
+
+	signal is_gif_painted : std_logic;  -- is the gif painted
+    signal gif_clr : std_logic_vector(11 downto 0); -- gif colour signal
+	signal gif_x : unsigned(10 downto 0) := to_unsigned(212, 11);
+    signal gif_y : unsigned(10 downto 0) := to_unsigned(50, 11);
+
+	signal snake_speed : integer := 1;
+	signal score : integer := 0;
 begin
-    led <= switch;
+    led <= switch;  -- connect the leds to the switches
     start <= switch(7);
     
-    process(pixel_clk)
+    process(pixel_clk) -- process to select the current frame of the GIF (can control the speed too)
     begin
         if rising_edge(pixel_clk)then
              if yCount = to_unsigned(1, yCount'length) and xCount = to_unsigned(1, xCount'length) then
@@ -1828,34 +1823,53 @@ begin
         end if;
     end process;
     
+	-- paint the apple gif at the current x, y position
     is_img_painted <= '1' when (xCount >= img_x and xCount < img_x + 16 and yCount >= img_y and yCount < img_y + 16) else '0';
     --is_img_painted <= '1';
 --    img_clr <= ROM((yCount - img_y) mod img_size_y)((xCount - img_x) mod img_size_x) when is_img_painted = '1' else '0';
 --    img_clr <= COLOR_ROM((to_integer(yCount - img_y) mod img_size_y),(to_integer(xCount - img_x)) mod img_size_x) when is_img_painted = '1' else (others => '0');
 --    img_clr <= COLOR_GIF_ROM(to_integer(current_frame_gif(11 downto 6)), (to_integer(yCount - img_y) mod img_size_y),(to_integer(xCount - img_x)) mod img_size_x) when is_img_painted = '1' else (others => '0');
-    img_clr <= apple_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
+    
+	-- select the colours from the ROMs
+	img_clr <= APPLE_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
 
     brick_clr <= BRICK_ROM((to_integer(yCount) mod 16),(to_integer(xCount) mod 16)) when border = '1' else (others => '0');
 
 	snake_clr <= SNAKE_ROM((to_integer(yCount) mod 8),(to_integer(xCount) mod 8)) when snakeBody /= (127 downto 0 => '0') else (others => '0');
 
+	is_gif_painted <= '1' when (xCount >= gif_x and xCount < gif_x + 216 and yCount >= gif_y and yCount < gif_y + 384) else '0';
+    gif_clr <= COLOR_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount(10 downto 3) - gif_y(10 downto 3)) mod 48),(to_integer(xCount(10 downto 3) - gif_x(10 downto 3))) mod 27) when is_gif_painted = '1' else (others => '0');
+
+	generate_random <= is_img_painted and border;
+
+	-- connect the signals to the VGA controller
     vga_controller : entity work.vga_controller_640_60(Behavioral)
         Port map (rst => '0', pixel_clk => pixel_clk, HS => hsync, VS => vsync, hcount => xCount, vcount => yCount, blank => display);
 
+	-- instantiate clock divider for 100MHz to 25MHz
     clk_div_unit_25Mhz : entity work.nbit_clk_div(Behavioral)
         Generic map (div_factor => 4,
                      high_count => 2,
                      num_of_bits => 3)
         Port map (clk_in => clk_100mhz, output => pixel_clk);
 
+	-- instantiate clock divider for 100MHz to 500Hz
+	clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
+        Generic map (div_factor => 200000,
+                     high_count => 200000/2,
+                     num_of_bits => 18)
+        Port map (clk_in => clk_100mhz, output => clk_500hz);
+
     -- instatiate random grid
     random_grid : entity work.randomGrid(Behavioral)
-        Port map (pixel_clk => pixel_clk, rand_X => rand_X, rand_Y => rand_Y);
+        Port map (pixel_clk => pixel_clk, rand_X => rand_X, rand_Y => rand_Y, generate_random => generate_random);
 
+	-- insitiate update clock
     update_clk : entity work.updateClk(Behavioral)
         Generic map (max_value => 4000000)
         Port map (clk_100mhz => clk_100mhz, update => update);
 
+	-- instantiate debounce for buttons
     up_sig : entity work.Debounce(Behavioral)
         Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);
 
@@ -1868,11 +1882,49 @@ begin
     right_sig : entity work.Debounce(Behavioral)
         Port map (clk => pixel_clk, rst => '0', noisy => btn_right, button_debounced => right);
 
+	-- instantiate BCD counter for minutes
+    bcd_counter_unit_1 : entity work.nbit_bcd_counter(Behavioral)
+        Port map (orig_clk => clk_100mhz, clk => bcd_counter_1_clk, up_down => '0', reset => bcd_counter_1_reset, cout => bcd_counter_1_cout, is_zero => open, output => bcd_counter_out_1);
+
+    -- instantiate BCD counter for seconds
+    bcd_counter_unit_2 : entity work.nbit_bcd_counter(Behavioral)
+        Port map (orig_clk => clk_100mhz, clk => bcd_counter_2_clk, up_down => '0', reset => bcd_counter_2_reset, cout => open, is_zero => open, output => bcd_counter_out_2);
+
+	-- instantiate four digits display
+	four_digits_unit : entity work.four_digits(Behavioral)
+		Port map (d3 => bcd_counter_out_2(7 downto 4),
+                  d2 => bcd_counter_out_2(3 downto 0),
+                  d1 => bcd_counter_out_1(7 downto 4),
+                  d0 => bcd_counter_out_1(3 downto 0),
+                  ck => clk_500hz, seg => seg, an => an, dp => dp);
+
+	-- process to set the state of the bcd counters for the score
+	process(clk_100mhz)
+	begin
+		if rising_edge(clk_100mhz) then
+			bcd_counter_2_clk <= bcd_counter_1_cout;
+			if game_over = '0' then
+				bcd_counter_1_reset <= '0';
+				bcd_counter_2_reset <= '0';
+				if increment_score = '1' then
+					bcd_counter_1_clk <= '1';
+				else
+					bcd_counter_1_clk <= '0';
+				end if;
+			elsif game_over = '1' then
+				bcd_counter_1_clk <= '1';
+				bcd_counter_2_clk <= '1';
+				bcd_counter_1_reset <= '1';
+				bcd_counter_2_reset <= '1';
+			end if;
+		end if;
+	end process;
+
     process(clk_100mhz)
     begin
         if rising_edge(clk_100mhz) then
         if pixel_clk = '1' then
-            if start = '0' then
+            if start = '0' then -- intial start of the game conditions
                 snakeX(0) <= to_unsigned(40, 7);
                 snakeY(0) <= to_unsigned(30, 7);
                 for count in 1 to 127 loop
@@ -1880,18 +1932,19 @@ begin
                     snakeY(count) <= to_unsigned(127, 7);
                 end loop;
                 size <= to_unsigned(1, 7);
+--                SIZE_INCREMENT <= 1;
                 game_over <= '0';
             elsif game_over = '0' then
                 if update = '1' then
                     for count in 1 to 127 loop
                         if size > count then
-                            snakeX(count) <= snakeX(count-1);
+                            snakeX(count) <= snakeX(count-1); -- update the snake body position
                             snakeY(count) <= snakeY(count-1);
                         end if;
                     end loop;
                     case direction is
                         when "0001" =>
-                            snakeY(0) <= snakeY(0) - to_unsigned(1, 7);
+                            snakeY(0) <= snakeY(0) - to_unsigned(1, 7); -- update snake position based on the direction
                         when "0010" =>
                             snakeY(0) <= snakeY(0) + to_unsigned(1, 7);
                         when "0100" =>
@@ -1902,20 +1955,26 @@ begin
                             null;
                     end case;
                 else 
-                    if img_clr /= "000000000000" and (snakeBody /= (127 downto 0 => '0')) then                    
+                    if img_clr /= "000000000000" and (snakeBody /= (127 downto 0 => '0')) then                  
 --                    if (snakeX(0) = pearX) and (snakeY(0) = pearY) then
-                        img_x <= rand_X & "0000";
+                        img_x <= rand_X & "0000";  -- if food is eaten, increment size and change food position
                         img_y <= rand_Y & "0000";
                         if size < (128 - SIZE_INCREMENT) then
                             size <= size + SIZE_INCREMENT;
+							-- double the size increment
+--							SIZE_INCREMENT <= SIZE_INCREMENT * 2;
                         end if;
+						increment_score <= '1';
                     
                     -- elsif border = '1' and snakeBody(0) = '1' then
-                    elsif brick_clr /= "000000000000" and snakeBody(0) = '1' then
+                    elsif brick_clr /= "000000000000" and snakeBody(0) = '1' then -- border collision
                          game_over <= '1';
                     
-                    elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then
+                    elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then --snaek collision
                         game_over <= '1';
+
+					else
+						increment_score <= '0';
                     end if;
                 end if;
             end if;
@@ -1923,6 +1982,7 @@ begin
         end if;
     end process;
 
+	-- process to the direction of the snake based on the buttons
     process(clk_100mhz)
     begin
         if rising_edge(clk_100mhz) then
@@ -1940,6 +2000,7 @@ begin
         end if;
     end process;
 
+	-- process to select level based on switch input
     process(clk_100mhz)
     begin
         if rising_edge(clk_100mhz) then
@@ -1974,27 +2035,13 @@ begin
         end if;
     end process;
 
-    process(clk_100mhz)
-    begin
-        if rising_edge(clk_100mhz) then
-        if pixel_clk = '1' then
-            if (xCount(9 downto 3) = pearX) and (yCount(9 downto 3) = pearY) then
-                pear <= '1';
-                
-                
-                -- pear <= ROM(to_integer(yCount(9 downto 3))) (to_integer(xCount(9 downto 3)));
-            else
-                pear <= '0';
-            end if;
-        end if;
-        end if;
-    end process;
-
+	-- process to paint the snake body
     process(clk_100mhz)
     begin
         if rising_edge(clk_100mhz) then
         if pixel_clk = '1' then
             for count in 0 to 127 loop
+				-- change this to account for the size of the snake rom sprite which is 16x16
                 if (xCount(9 downto 3) = snakeX(count)) and (yCount(9 downto 3) = snakeY(count)) then
                     snakeBody(count) <= '1';
                 else
@@ -2005,18 +2052,16 @@ begin
         end if;
     end process;
     
+	-- set vgared, vgagreen, vgablue by splitting the 12 bit rgb signal
     vgared <= rgb(11 downto 8);
     vgagreen <= rgb(7 downto 4);
     vgablue <= rgb(3 downto 0);
     
+	-- set the rgb signal based on the game state and the colours from the ROMs
     rgb <= (others => '0') when display = '1' else 
-           "111100000000" when game_over = '1' else
+           gif_clr when game_over = '1' else
            snake_clr when (snakeBody /= (127 downto 0 => '0')) else
            brick_clr when border = '1' else 
            img_clr;
-
---    vgared <= "1111" when (display = '0' and (img_clr /= "000000000000" or game_over = '1')) else "0000";
---    vgagreen <= "1111" when display = '0' and (snakeBody /= (127 downto 0 => '0') and game_over = '0') ;
---    vgablue <= "1111" when (display = '0' and (border = '1' and game_over = '0')) else "0000";
 
 end Behavioral;
