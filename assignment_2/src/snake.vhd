@@ -4,18 +4,23 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity snake is
     Port ( clk_100mhz : in STD_LOGIC;					--  master clock 100MHz
+		   pixel_clk : in STD_LOGIC;					-- pixel clock
+		   update : in STD_LOGIC;						-- signal to update the food position
+		   clk_500hz : in STD_LOGIC;					-- 500Hz clock
+		   xCount : in unsigned(10 downto 0);			-- x position from horizontal counter of vga driver
+		   yCount : in unsigned(10 downto 0);			-- y position from vertical counter of vga driver
+		   rand_X : in unsigned(6 downto 0);			-- random x position for the food
+		   rand_Y : in unsigned(6 downto 0);			-- random y position for the food
            switch : in STD_LOGIC_VECTOR(7 downto 0);	-- switches 0-7
            btn_up : in STD_LOGIC;						-- up button
-           btn_enter : in STD_LOGIC;					-- enter button
            btn_left : in STD_LOGIC;						-- left button
            btn_right : in STD_LOGIC;					-- right button
            btn_down : in STD_LOGIC;						-- down button
+		   display : in STD_LOGIC;						-- display signal to enable rgb when blanking is off
            led : out STD_LOGIC_VECTOR(7 downto 0);		-- leds 0-7
            vgared : out STD_LOGIC_VECTOR(3 downto 0);	-- vga red
            vgagreen : out STD_LOGIC_VECTOR(3 downto 0);	-- vga green
            vgablue : out STD_LOGIC_VECTOR(3 downto 0);	-- vga blue
-           hsync : out STD_LOGIC;						-- horizontal sync
-           vsync : out STD_LOGIC;						-- vertical sync
 		   seg  : out std_logic_vector (6 downto 0); 	-- 7-segment display
            dp   : out std_logic; 						-- 7-segment display decimal point
            an   : out std_logic_vector (3 downto 0)		-- 7-segment display anodes
@@ -23,23 +28,13 @@ entity snake is
 end snake;
 
 architecture Behavioral of snake is
-    signal pixel_clk : STD_LOGIC;   -- pixel clock
-
     constant SIZE_INCREMENT : integer := 4;   -- size increment for the snake body
     
-    signal xCount : unsigned(10 downto 0);	-- x position from horizontal counter of vga driver
-    signal yCount : unsigned(10 downto 0);  -- y position from vertical counter of vga driver
-    signal rand_X : unsigned(6 downto 0);   -- x random position for the food
-    signal rand_Y : unsigned(6 downto 0);	-- y random position for the foodq
     signal size : unsigned(6 downto 0);	    -- keep track of the size of the snake
     signal pearX : unsigned(6 downto 0) := "0101000"; 
     signal pearY : unsigned(6 downto 0) := "0001010";
-    signal display : std_logic;  -- display signal to enable rgb when blanking is off
-    signal R : std_logic;
-    signal G : std_logic;
-    signal B : std_logic;
     signal game_over : std_logic;  -- signal to indicate game over
-    signal pear, border : std_logic; -- signal to draw border and food
+    signal border : std_logic; -- signal to draw border and food
 
     type snake_array is array (0 to 127) of unsigned(6 downto 0);  -- array to keep track of the snake body
     -- type snakeY_array is array (0 to 127) of unsigned(6 downto 0);
@@ -48,14 +43,11 @@ architecture Behavioral of snake is
     signal snakeY : snake_array;	-- snake y positions
 
     signal snakeBody : unsigned(127 downto 0);  -- vector to render the snake body
-    signal update : std_logic;   -- update clock signal
-    signal direction : std_logic_vector(3 downto 0);  -- snake movement direction
+    signal direction : std_logic_vector(3 downto 0) := "0001";
 
     signal count : integer;  -- counter to keep track of the snake body in the for loops
 
     signal start : std_logic;  -- signal to start the game
-
-    signal up, down, left, right : std_logic;  -- debounced signals for the buttons
     
 	-- rick astley never gonna give you up GIF
     type color_gif_sprite is array (0 to 31, 0 to 47, 0 to 26) of std_logic_vector(0 to 11);
@@ -1789,13 +1781,10 @@ architecture Behavioral of snake is
 
     signal brick_clr : std_logic_vector(11 downto 0);  -- brick colour sognal
 
-	signal generate_random : std_logic;
-
 	signal snake_clr : std_logic_vector(11 downto 0); -- snake colour signal
 
 	signal bcd_counter_out_1 : std_logic_vector(7 downto 0);  -- signals for the bcd counters
 	signal bcd_counter_out_2 : std_logic_vector(7 downto 0);
-	signal clk_500hz : std_logic;
 	signal bcd_counter_1_cout : std_logic;
 	signal bcd_counter_1_clk : std_logic;
 	signal bcd_counter_2_clk : std_logic;
@@ -1807,9 +1796,6 @@ architecture Behavioral of snake is
     signal gif_clr : std_logic_vector(11 downto 0); -- gif colour signal
 	signal gif_x : unsigned(10 downto 0) := to_unsigned(212, 11);
     signal gif_y : unsigned(10 downto 0) := to_unsigned(50, 11);
-
-	signal snake_speed : integer := 1;
-	signal score : integer := 0;
 begin
     led <= switch;  -- connect the leds to the switches
     start <= switch(7);
@@ -1839,48 +1825,6 @@ begin
 
 	is_gif_painted <= '1' when (xCount >= gif_x and xCount < gif_x + 216 and yCount >= gif_y and yCount < gif_y + 384) else '0';
     gif_clr <= COLOR_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount(10 downto 3) - gif_y(10 downto 3)) mod 48),(to_integer(xCount(10 downto 3) - gif_x(10 downto 3))) mod 27) when is_gif_painted = '1' else (others => '0');
-
-	generate_random <= is_img_painted and border;
-
-	-- connect the signals to the VGA controller
-    vga_controller : entity work.vga_controller_640_60(Behavioral)
-        Port map (rst => '0', pixel_clk => pixel_clk, HS => hsync, VS => vsync, hcount => xCount, vcount => yCount, blank => display);
-
-	-- instantiate clock divider for 100MHz to 25MHz
-    clk_div_unit_25Mhz : entity work.nbit_clk_div(Behavioral)
-        Generic map (div_factor => 4,
-                     high_count => 2,
-                     num_of_bits => 3)
-        Port map (clk_in => clk_100mhz, output => pixel_clk);
-
-	-- instantiate clock divider for 100MHz to 500Hz
-	clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
-        Generic map (div_factor => 200000,
-                     high_count => 200000/2,
-                     num_of_bits => 18)
-        Port map (clk_in => clk_100mhz, output => clk_500hz);
-
-    -- instatiate random grid
-    random_grid : entity work.randomGrid(Behavioral)
-        Port map (pixel_clk => pixel_clk, rand_X => rand_X, rand_Y => rand_Y, generate_random => generate_random);
-
-	-- insitiate update clock
-    update_clk : entity work.updateClk(Behavioral)
-        Generic map (max_value => 4000000)
-        Port map (clk_100mhz => clk_100mhz, update => update);
-
-	-- instantiate debounce for buttons
-    up_sig : entity work.Debounce(Behavioral)
-        Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);
-
-    down_sig : entity work.Debounce(Behavioral)
-        Port map (clk => pixel_clk, rst => '0', noisy => btn_down, button_debounced => down);
-
-    left_sig : entity work.Debounce(Behavioral)
-        Port map (clk => pixel_clk, rst => '0', noisy => btn_left, button_debounced => left);
-
-    right_sig : entity work.Debounce(Behavioral)
-        Port map (clk => pixel_clk, rst => '0', noisy => btn_right, button_debounced => right);
 
 	-- instantiate BCD counter for minutes
     bcd_counter_unit_1 : entity work.nbit_bcd_counter(Behavioral)
@@ -1987,13 +1931,13 @@ begin
     begin
         if rising_edge(clk_100mhz) then
             if pixel_clk = '1' then
-            if (up = '1' and direction /= "0010") then
+            if (btn_up = '1' and direction /= "0010") then
                 direction <= "0001";
-            elsif (down = '1' and direction /= "0001") then
+            elsif (btn_down = '1' and direction /= "0001") then
                 direction <= "0010";
-            elsif (left = '1' and  direction /= "1000") then
+            elsif (btn_left = '1' and  direction /= "1000") then
                 direction <= "0100";
-            elsif (right  = '1' and direction /= "0100") then
+            elsif (btn_right  = '1' and direction /= "0100") then
                 direction <= "1000";
             end if;
             end if;

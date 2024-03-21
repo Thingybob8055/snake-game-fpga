@@ -15,9 +15,9 @@ entity randomGrid is
     Port ( pixel_clk : in STD_LOGIC;
            rand_X :inout unsigned(6 downto 0);
         --    rand_X_out : out unsigned(6 downto 0);
-           rand_Y : inout unsigned(6 downto 0);
+           rand_Y : inout unsigned(6 downto 0)
         --    rand_Y_out : out unsigned(6 downto 0);
-           generate_random : in STD_LOGIC
+        --    generate_random : in STD_LOGIC
          );
 end randomGrid;
 
