@@ -1811,10 +1811,6 @@ begin
     
 	-- paint the apple gif at the current x, y position
     is_img_painted <= '1' when (xCount >= img_x and xCount < img_x + 16 and yCount >= img_y and yCount < img_y + 16) else '0';
-    --is_img_painted <= '1';
---    img_clr <= ROM((yCount - img_y) mod img_size_y)((xCount - img_x) mod img_size_x) when is_img_painted = '1' else '0';
---    img_clr <= COLOR_ROM((to_integer(yCount - img_y) mod img_size_y),(to_integer(xCount - img_x)) mod img_size_x) when is_img_painted = '1' else (others => '0');
---    img_clr <= COLOR_GIF_ROM(to_integer(current_frame_gif(11 downto 6)), (to_integer(yCount - img_y) mod img_size_y),(to_integer(xCount - img_x)) mod img_size_x) when is_img_painted = '1' else (others => '0');
     
 	-- select the colours from the ROMs
 	img_clr <= APPLE_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
