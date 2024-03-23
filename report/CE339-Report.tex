@@ -76,6 +76,8 @@
     numbersep=5pt,
 }
 
+\usepackage{wrapfig}
+
 \begin{document}
 %top matter
     \begin{titlepage}
@@ -168,6 +170,114 @@
 \setlength{\parindent}{0pt}
 
 This report documents an experiment to design a ``Snake'' Video Game on hardware using a Hardware Description Language (HDL) called VHDL (Very High Speed Integrated Circuit Hardware Design Language). The target platform is the Digilent Basys3 Board which houses an Artix-7 based FPGA[1]. The VHDL code is synthesised using Xilinx Vivado. The VGA (Video Graphics Array) port on the Basys3 board is used to display the game on a compatible monitor and the player score is shown on the 7-segment display. This report will explain the design in a top-down approach, whilst going into detail on every sub-components. The top level schematic will generate the necessary signals required to correctly display the game and the score, such as the VGA synchronisation signals, RGB (red, green, blue) colour signals and the 7-segment display cathode and anode signals.
+
+\section{\fontsize{11.3pt}{12pt}\selectfont \bf The Design}
+
+\subsection{\fontsize{11.4pt}{12pt}\selectfont \bf High Level Overview \label{sec:2.1}}
+
+\fontsize{11pt}{12pt}\selectfont
+\label{sec:2}
+
+\begin{figure}[h]
+  \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.7]{VGA-Flow - Page 1.pdf}
+  \caption{\em High level architecture of the system}
+  \label{fig:1}
+\end{figure}
+
+Figure \ref{fig:1} above shows the high level block diagram of the system. The main clock is from the Basys3 board which is at 100MHz frequency. The targer resolution is 640x480. The pixel clock is 25MHz, with a refresh rate of 60Hz. In order to generate the required synchronisation signals (by the VGA Controller module) for these specifications, the VGA controller module needs a 25MHz a clock. Hence the 100MHz master clock is given as input to a clock divider to generate this frequency. The 25MHz clock is also used for button deboucing (to keep it in synchronisation with the graphics being rendered to the screen), and also for the Random Grid module. Another clock divider was instantiated to generate a 500Hz clock. The 500Hz clock is used for the time multiplexed 7-segment display driver, which resides inside the Snake Logic module. The update clock is a module used to generate a pulse at a desired frequency (in this case 25Hz), which is high only for one clock cycle of the master clock. The purpose of this module is to set the update frequency of the game logic, hence the output of the update clock is given as input to the Snake Logic module. The Random Grid module is used to generate pseudo random locations for the positions of the food in the game. And the output is given to the Snake Module as input. The VGA Controller module generates the horizontal and vertical synchronisation signals for the VGA Port. It also outputs the current x and y count co-ordinate as well as the blanking signal for the Snake Logic module to keep track of the screen position. The Snake Logic block is the main heart of the system. The Snake Logic module is the heart of the entire system, and contains the game main logic, as well as the rendering signals. This module contains many processes to control game elements such as the snake location direction, snake direction, snake size, game state, game levels etc. The module also contains the 7-segment display driver and BCD (Binary Coded Decimal) counters to display the score whilst playing the game. This module outputs the anode and cathode signals for the 7-segment display as well as the red, green and blue signals for the VGA port. 
+
+\vspace{-1.0em}
+\subsection{\fontsize{11.4pt}{12pt}\selectfont \bf Detailed Overview \label{sec:2.2}}
+
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf snake \label{sec:2.2.1}}
+
+\vspace{-1.5em}
+\begin{wrapfigure}[14]{l}{0.6\textwidth}
+    \centering
+    \includegraphics[scale = 0.8]{VGA-Flow - Page 1-1.pdf}
+    \caption{\em Inputs/outputs of snake module}
+    \label{fig:2}
+\end{wrapfigure}
+
+Figure \ref{fig:2} on the left depicts the inputs and outputs of the \verb|snake| module. This module contains the main logic that controls the snake game, as well as the Read Only Memories (ROMs) that store the bitmapped sprites/graphics. The inputs are master 100MHz clock (for synchronisation), pixel clock (25MHz), update clock (25Hz), x and y counters, random food location, and the debounced buttons. It outputs the red, green, blue signals for VGA and the cathode and anode signals for the 7-segment display. 
+
+
+\begin{figure}[h]
+  \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.72]{logic.pdf}
+  \caption{\em Button and game logic processes of the snake module}
+  \label{fig:3}
+\end{figure}
+
+\clearpage
+
+\begin{wrapfigure}[32]{l}{0.5\textwidth}
+    \centering
+    \includegraphics[scale = 0.65]{score.pdf}
+    \caption{\em Level select and score count process and colour rendering}
+    \label{fig:4}
+\end{wrapfigure}
+
+The \verb|snake| module is composed of many processes to construct the game logic and behaviour. Figure \ref{fig:3} and Figure \ref{fig:4} shows flow diagrams to represent this. Figure \ref{fig:3} above shows the button/input and the main game logic process. The button process sets the value of the \verb|direction| register based on the button input. The button input is received from the \verb|Debounce| module (which debounces the button presses for reliability). This process updated with the pixel clock of 25MHz. The game logic process handles updating the snake for the movement as well as checking for collisions. If the start signal is zero, the game is idle and all the starting game conditions are set to defaults (such as initial food location). If the game over signal is high, the game will end until the game is reset, and once reset, the game is reset back to default values. This part of this process is updated at 25MHz. The other parts of the process is updated at 25Hz, which is the games update clock. When the update clock is high, the snake position array (for both x and y locations) are updated in a for loop depending on the current snake size. The snake position at the first index (snake head) is updated depending on the current direction (set by the buttons). When the update clock is low, the collision between the border, food and the snake body is checked. If a collision with the food is detected, the snake size is incremented (unless max snake length is reached). Next if the snake head collides with a border or itself, then the game over signal will be set, thus ending the game, until the game is reset.  Figure \ref{fig:4} shows three other important processes in this module. The score counting process increments the score during the game when food is collected and when the game ends, the game is reset. BCD counters and a 7-segment display driver is used to achieve this. The level select process is very simple, it selects the level based on the switch input. And the levels are border signals that are generated based on certain conditions that decide where the borders are placed on the screen. Lastly, the colour displaying/rendering logic is a combinational process, the other processes we have seen so far are sequential logic. If the display signal is high (same as blanking, which is active low logic), then the RBG colours are turned off. The rgb colours are selected based on which graphics is to be rendered, in this case, the border graphics, the game over GIF and the snake. Graphics in this game are all bitmapped ROMs, this will be explained later in the report. 
+
+\vspace{-1.5em}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf updateClk \label{sec:2.2.2}}
+\vspace{-1.5em}
+% \begin{wrapfigure}[32]{l}{0.5\textwidth}
+%     \centering
+%     \includegraphics[scale = 0.65]{update.pdf}
+%     \caption{\em Level select and score count process and colour rendering}
+%     \label{fig:4}
+% \end{wrapfigure}
+
+\begin{figure}[h]
+\centering
+\captionsetup{justification=centering}
+\begin{subfigure}{0.5\textwidth}
+
+%   \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.6]{update.pdf}
+  \caption{\em Flow chart for updateClk}
+
+% \caption{\em Diagram of a Differential Drive Mobile Robot}
+\label{fig:subim1}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+%   \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.72]{update_block.pdf}
+  \caption{\em Entity block of updateClk}
+  
+% \caption{\em Differential Drive Robot Kinematics}
+\label{fig:subim2}
+\end{subfigure}
+\caption{\em updateClk module diagrams}
+\label{fig:5}
+\end{figure}
+
+\clearpage
+
+Figure \ref{fig:5} above contains two sub figures, Figure \ref{fig:subim1} and Figure \ref{fig:subim2} which are the architecture and block diagram of this entity respectively. This module has one input, the master clock and one output, the update clock. This is a generic value where the max count can be configured for a different update clock. The update clock used in this game is set to 25Hz. The architecture counts till the set max value and sets the output high for one clock cycle of the master clock, and then becomes low after.
+
+\vspace{-1em}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf randomGrid \label{sec:2.2.3}}
+
+
+\vspace{-1.5em}
+\begin{wrapfigure}[14]{l}{0.4\textwidth}
+    \centering
+    \includegraphics[scale = 0.85]{random.pdf}
+    \caption{\em Inputs/outputs of snake module}
+    \label{fig:6}
+\end{wrapfigure}
+~\\
+
+
+
 
 
 
