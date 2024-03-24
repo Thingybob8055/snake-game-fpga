@@ -25,8 +25,8 @@ begin
     process(pixel_clk)
     begin
         if rising_edge(pixel_clk) then
-        rand_X <= ((rand_X + 3) mod 37) + 1; -- set random x and y position
-        rand_Y <= ((rand_Y + 3) mod 27) + 1;
+            rand_X <= ((rand_X + 3) mod 37) + 1; -- set random x and y position
+            rand_Y <= ((rand_Y + 3) mod 27) + 1;
         end if;
     end process;
 end Behavioral;

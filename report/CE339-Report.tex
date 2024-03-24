@@ -1,4 +1,5 @@
 \documentclass[aps, secnumarabic, balancelastpage, asmath, amssymb, nofootinbib, floatfix,]{revtex4-2}
+\usepackage{minted}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
@@ -23,6 +24,16 @@
 }
 
 \hypersetup{colorlinks=true, pdfstartview=FitV, linkcolor=blue, citecolor=black, plainpages=false, pdfpagelabels=true, urlcolor=black}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+% \SetupFloatingEnvironment{listing}{name=Source Code}
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+\definecolor{LightGray}{gray}{0.9}
 
 \setlength{\arrayrulewidth}{0.3mm}
 \setlength{\tabcolsep}{5pt}
@@ -268,14 +279,93 @@ Figure \ref{fig:5} above contains two sub figures, Figure \ref{fig:subim1} and F
 
 
 \vspace{-1.5em}
-\begin{wrapfigure}[14]{l}{0.4\textwidth}
+\begin{wrapfigure}[7]{l}{0.4\textwidth}
     \centering
     \includegraphics[scale = 0.85]{random.pdf}
-    \caption{\em Inputs/outputs of snake module}
+    \caption{\em randomGrid entity diagram}
     \label{fig:6}
 \end{wrapfigure}
 ~\\
+Figure \ref{fig:6} on the left shows the inputs and outputs of the randomGrid module. This module is used to generate the pseudo random x and y locations for the food. The pseudo random generation implementation in this project is very simple, as a simple mathematical operation is done on the current random location to move the food `unprediectably'.
 
+\begin{code}
+  \label{code:1}
+  \captionof*{listing}{Code Snippet 4: {randomGrid architecture implementation}}
+  \vspace{-0.5em}
+  \begin{minted}
+  [
+  frame=single,
+  framesep=10pt,
+  baselinestretch=1.2,
+  bgcolor=backgroundColour,
+  fontsize={\fontsize{9.5}{6.5}\selectfont},
+  % linenos,
+  tabsize=2,
+  breaklines
+  ]
+  {vhdl}
+if rising_edge(pixel_clk) then
+    rand_X <= ((rand_X + 3) mod 37) + 1; -- set random x and y position
+    rand_Y <= ((rand_Y + 3) mod 27) + 1;
+end if;
+  \end{minted}
+  \end{code}
+  
+Since the implementation is simple, it is shown in \hyperref[code:1]{Code Snippet 1}. A simple arithmetic oprtation is computed on the value read back from the current random x and y value, at the rising egde of the pixel clock. The output of this module is given as input to the \verb|snake| module.
+
+\vspace{-1.5em}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf 7-Segment Display \label{sec:2.2.4}}
+
+\begin{figure}[h]
+  \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.69]{four_digits.pdf}
+  \caption{\em Architectural block diagram of the four\_digits module}
+  \label{fig:7}
+\end{figure}
+
+\clearpage
+
+\begin{wrapfigure}[9]{l}{0.42\textwidth}
+  \centering
+  \includegraphics[scale = 0.8]{four_digit_block.pdf}
+  \caption{\em four\_digits entity diagram}
+  \label{fig:8}
+\end{wrapfigure}
+
+This section explains the 7-segment display driver (and it's subcomponents) circuit used to display the score. Figure \ref{fig:8} on the left shows the entity inputs and outputs and Figure \ref{fig:7} above shows the high level connection diagram. This module takes in a 500Hz clock, and four inputs which are four bits wide, and generates the required anode and cathode displays. Time division multiplexing is used to display the four digits on the four seven segment displays available on the Basys3 board. The 500Hz clock given to a two bit counter which counts from 0$\rightarrow$3, and it's output is fed into a 4-t0-1 multiplexer to select the corresponding bit for that digit. The four multiplexer output is given to a module called \verb|one_digit| which is a 7-segment decoder. The 2-bit counter output is also used by a 2-to-4 decoder to select the correct anode which is currently being displayed. The anodes are swapped at a rate of 500Hz, a refresh rate human eyes cannot visibly see. The 2-bit counter being very simple is implemented using behavioural modelling. Figure \ref{fig:9}, \ref{fig:10} and \ref{fig:11} below shows the entity block diagrams of \verb|mux4_1|, \verb|decoder2_4| and \verb|one_digit| respectively, which is used in the circuit from Figure \ref{fig:7}.
+
+\begin{figure}[!htb]
+  \minipage{0.32\textwidth}
+    \includegraphics[width=\linewidth]{mux4.pdf}
+    \caption{\em mux4\_1 entity}\label{fig:9}
+  \endminipage\hfill
+  \minipage{0.32\textwidth}
+    \includegraphics[width=\linewidth]{dec.pdf}
+    \caption{\em decoder\_2\_4 entity}\label{fig:10}
+  \endminipage\hfill
+  \minipage{0.32\textwidth}%
+    \includegraphics[width=\linewidth]{one_digit.pdf}
+    \caption{one\_digit entity}\label{fig:11}
+  \endminipage
+  \end{figure}
+  
+All the three modules are very simple. \verb|one_digit| takes in a 4 bit number as input and outputs the corresponding 7 bit output for the 7 segments on the 7-segment display. The \verb|decoder| entity is a simple two-to-four decoder, a certain bit of the 4 bit output is low depending on the input. For example, if the input is $01_2$, the output is $1101_2$, the $2^{\text{nd}}$ bit is low. And lastly, the 4-to-1 mux routes the corresponding bit of the input \verb|a| depending on the select input \verb|s|, to the output.
+
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf Debounce \label{sec:2.2.5}}
+
+
+
+
+
+
+% \begin{figure}[h]
+%   \centering
+%   %\captionsetup{justification=centering}
+%   \includegraphics[scale = 0.72]{logic.pdf}
+%   \caption{\em Button and game logic processes of the snake module}
+%   \label{fig:3}
+% \end{figure}
 
 
 
@@ -287,3 +377,5 @@ Figure \ref{fig:5} above contains two sub figures, Figure \ref{fig:subim1} and F
 \end{document}
 
 %% [1] https://digilent.com/reference/programmable-logic/basys-3/start
+
+% LSFR
