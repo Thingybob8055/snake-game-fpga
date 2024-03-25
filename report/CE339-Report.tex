@@ -350,22 +350,59 @@ This section explains the 7-segment display driver (and it's subcomponents) circ
   \endminipage
   \end{figure}
   
-All the three modules are very simple. \verb|one_digit| takes in a 4 bit number as input and outputs the corresponding 7 bit output for the 7 segments on the 7-segment display. The \verb|decoder| entity is a simple two-to-four decoder, a certain bit of the 4 bit output is low depending on the input. For example, if the input is $01_2$, the output is $1101_2$, the $2^{\text{nd}}$ bit is low. And lastly, the 4-to-1 mux routes the corresponding bit of the input \verb|a| depending on the select input \verb|s|, to the output.
+All the three modules are very simple. \verb|one_digit| takes in a 4 bit number as input and outputs the corresponding 7 bit output for the 7 segments on the 7-segment display. The \verb|decoder| entity is a simple two-to-four decoder, a certain bit of the 4 bit output is low depending on the input. For example, if the input is $01_2$, the output is $1101_2$, the $2^{\text{nd}}$ bit is low. And lastly, the 4-to-1 mux routes the corresponding bit of the input \verb|a| depending on the select input \verb|s|, to the output. The \verb|four_digit| module is instantiated inside the \verb|snake| module from Figure \ref{fig:2} and its outputs are propagated outside the \verb|snake| module.
 
+\vspace{-1em}
 \subsubsection{\fontsize{10pt}{12pt}\selectfont \bf Debounce \label{sec:2.2.5}}
 
+\begin{figure}[h]
+\centering
+\captionsetup{justification=centering}
+\begin{subfigure}{0.5\textwidth}
 
-
-
-
-
-% \begin{figure}[h]
 %   \centering
-%   %\captionsetup{justification=centering}
-%   \includegraphics[scale = 0.72]{logic.pdf}
-%   \caption{\em Button and game logic processes of the snake module}
-%   \label{fig:3}
-% \end{figure}
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.6]{debounce_flow.pdf}
+  \caption{\em Flow chart for Debounce}
+
+% \caption{\em Diagram of a Differential Drive Mobile Robot}
+\label{fig:subim3}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+%   \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.72]{debounce.pdf}
+  \caption{\em Entity block of Debounce}
+  
+% \caption{\em Differential Drive Robot Kinematics}
+\label{fig:subim4}
+\end{subfigure}
+\caption{\em Debounce module diagrams}
+\label{fig:12}
+\end{figure}
+
+Figure \ref{fig:subim3} and \ref{fig:subim4} shows the flow chart and entity diagram for the Debounce module respectively. There are three inputs, clk, rst and noisy (the button input) and one output which is thd debounced press. This module has a configurable generic parameter, \verb|DELAY|. This module is clocked at the pixel clock, 25MHz. The module has a counter that counts till a delay value is reached, and once the count is same as the delay, the button press is debounced, and the counter is reset. The debounced output is input to the \verb|snake| module.
+
+\clearpage
+
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf vga\_controller\_640\_60 \label{sec:2.2.6}}
+
+
+\vspace{-1.5em}
+\begin{wrapfigure}[10]{l}{0.45\textwidth}
+    \centering
+    \includegraphics[scale = 0.8]{vga_controller.pdf}
+    \caption{\em VGA Controller module}
+    \label{fig:13}
+\end{wrapfigure}
+~\\
+Figure \ref{fig:13} on the left shows the entity diagram of the \verb|vga_controller_60_40| module. This module wasn't written by the author and was given by the supervisor. This module has 2 inputs, the 25MHz pixel clock (\verb|pixel_clock|) and reset (\verb|rst|). And outputs the horizontal sync (\verb|HS|), vertical sync \verb|VS|, current horizontal counter value (\verb|hcount|), current vertical counter value (\verb|vcount|) and the blanking signal (\verb|blank|). The horizontal and vertical synchronisation signals are outputted to the VGA port in the top level hierarchy. The vertical counter, horizontal counter and the blanking signals are all given as inputs to the \verb|snake| module from \ref{fig:2} to control the game logic.
+
+\vspace{-1em}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf nbit\_clk\_div \label{sec:2.2.7}}
+
+
+
 
 
 
