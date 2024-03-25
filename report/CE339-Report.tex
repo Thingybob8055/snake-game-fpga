@@ -198,7 +198,7 @@ This report documents an experiment to design a ``Snake'' Video Game on hardware
   \label{fig:1}
 \end{figure}
 
-Figure \ref{fig:1} above shows the high level block diagram of the system. The main clock is from the Basys3 board which is at 100MHz frequency. The targer resolution is 640x480. The pixel clock is 25MHz, with a refresh rate of 60Hz. In order to generate the required synchronisation signals (by the VGA Controller module) for these specifications, the VGA controller module needs a 25MHz a clock. Hence the 100MHz master clock is given as input to a clock divider to generate this frequency. The 25MHz clock is also used for button deboucing (to keep it in synchronisation with the graphics being rendered to the screen), and also for the Random Grid module. Another clock divider was instantiated to generate a 500Hz clock. The 500Hz clock is used for the time multiplexed 7-segment display driver, which resides inside the Snake Logic module. The update clock is a module used to generate a pulse at a desired frequency (in this case 25Hz), which is high only for one clock cycle of the master clock. The purpose of this module is to set the update frequency of the game logic, hence the output of the update clock is given as input to the Snake Logic module. The Random Grid module is used to generate pseudo random locations for the positions of the food in the game. And the output is given to the Snake Module as input. The VGA Controller module generates the horizontal and vertical synchronisation signals for the VGA Port. It also outputs the current x and y count co-ordinate as well as the blanking signal for the Snake Logic module to keep track of the screen position. The Snake Logic block is the main heart of the system. The Snake Logic module is the heart of the entire system, and contains the game main logic, as well as the rendering signals. This module contains many processes to control game elements such as the snake location direction, snake direction, snake size, game state, game levels etc. The module also contains the 7-segment display driver and BCD (Binary Coded Decimal) counters to display the score whilst playing the game. This module outputs the anode and cathode signals for the 7-segment display as well as the red, green and blue signals for the VGA port. 
+Figure \ref{fig:1} above shows the high level block diagram of the system. The main clock is from the Basys3 board which is at 100MHz frequency. The targer resolution is 640x480. The pixel clock is 25MHz, with a refresh rate of 60Hz. In order to generate the required synchronisation signals (by the VGA Controller module) for these specifications, the VGA controller module needs a 25MHz a clock. Hence the 100MHz master clock is given as input to a clock divider to generate this frequency. The 25MHz clock is also used for button deboucing (to keep it in synchronisation with the graphics being rendered to the screen), and also for the Random Grid module. Another clock divider was instantiated to generate a 500Hz clock. The 500Hz clock is used for the time multiplexed 7-segment display driver, which resides inside the Snake Logic module. The update clock is a module used to generate a pulse at a desired frequency (in this case 25Hz), which is high only for one clock cycle of the master clock. The purpose of this module is to set the update frequency of the game logic, hence the output of the update clock is given as input to the Snake Logic module. The Random Grid module is used to generate pseudo random locations for the positions of the food in the game. And the output is given to the Snake Module as input. The VGA Controller module generates the horizontal and vertical synchronisation signals for the VGA Port. It also outputs the current x and y count co-ordinate as well as the blanking signal for the Snake Logic module to keep track of the screen position. The Snake Logic block is the main heart of the system. The Snake Logic module is the heart of the entire system, and contains the game main logic, as well as the rendering signals. This module contains many processes to control game elements such as the snake location direction, snake direction, snake size, game state, game levels etc. The module also contains the 7-segment display driver and BCD (Binary Coded Decimal) counters to display the score whilst playing the game. This module outputs the anode and cathode signals for the 7-segment display as well as the red, green and blue signals for the VGA port. The high level diagram from Figure \ref{fig:1} represents the main top level file shown in \hyperref[code:main]{Source Code 1}.
 
 \vspace{-1.0em}
 \subsection{\fontsize{11.4pt}{12pt}\selectfont \bf Detailed Overview \label{sec:2.2}}
@@ -291,7 +291,7 @@ Figure \ref{fig:6} on the left shows the inputs and outputs of the randomGrid mo
 
 \begin{code}
   \label{code:1}
-  \captionof*{listing}{Code Snippet 4: {randomGrid architecture implementation}}
+  \captionof*{listing}{Code Snippet 1: {randomGrid architecture implementation}}
   \vspace{-0.5em}
   \begin{minted}
   [
@@ -440,7 +440,7 @@ Figure \ref{fig:14} above shows the flow diagram and entity diagram of the \verb
 Figure \ref{fig:15} on the left-hand side shows the generic counter used inside the clock divider. It has a configurable maximum count value. It is a very general purpose module as it has a \verb|negate| input, and the \verb|cin| input and \verb|cout| output can be used to easily chain multiple counters. The output of this module is used in the clock divider module in order to generate the divided clock signal. 
 
 \vspace{-1em}
-\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf nbit\_bcd\_counter \label{sec:2.2.7}}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf nbit\_bcd\_counter \label{sec:2.2.8}}
 
 \vspace{-1em}
 \begin{wrapfigure}[7]{l}{0.37\textwidth}
@@ -454,9 +454,67 @@ Figure \ref{fig:16} on the left shows the entity block diagram of the \verb|nbit
 
 \clearpage
 
-\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf Bitmapped Sprites and GIFs \label{sec:2.2.7}}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf Bitmapped Sprites and GIFs \label{sec:2.2.9}}
 
-As mentioned in section \ref{sec:2.2.1} of this report, graphics used in this game are stored as bitmap ROMs. This section details how sprites as well as GIFs were rendered on the VGA monitor. 
+As mentioned in section \ref{sec:2.2.1} of this report, graphics used in this game are stored as bitmap ROMs. This section details how sprites as well as GIFs were rendered on the VGA monitor. Bitmaps were used to render sprites and GIFs on the screen. A bitmap is essentially an array that holds information for each pixel in the image. In the case of this design, each element in the array holds RGB colour value for each pixel. 
+
+\begin{code}
+  \label{code:2}
+  \captionof*{listing}{Code Snippet 2: {\em ROM used for the snake sprite}}
+  \vspace{-0.5em}
+  \begin{minted}
+  [
+  frame=single,
+  framesep=10pt,
+  baselinestretch=1.2,
+  bgcolor=backgroundColour,
+  fontsize={\fontsize{7.5}{6.5}\selectfont},
+  % linenos,
+  tabsize=2,
+  breaklines
+  ]
+  {vhdl}
+type color_sprite_8 is array (0 to 7, 0 to 7) of std_logic_vector(0 to 11);
+constant SNAKE_ROM : color_sprite_8 := (
+	("010101100010","011010000010","011010000010","011010000010","011010000010","011010000010","011010000010","001001010001"),
+	("011010000010","010011000001","001110110001","001110110001","001110110001","001110110001","001110110001","001001100001"),
+	("011010000010","001110110001","000110100001","000110100000","000110100000","000110100001","000110100000","001001100001"),
+	("011010000010","001110110001","000101110001","001010100001","001010100001","001001110001","001010100001","001001100001"),
+	("011010000010","001110110001","000110100001","001010010001","001010010001","001010100001","001010110000","001001100001"),
+	("011010000010","001110110001","000110100001","001010100001","001010100001","001010100001","001010110000","001001100001"),
+	("011010000010","001110110001","000110110000","001010110000","001010110000","001010110000","001010110000","001001100001"),
+	("001001010001","001001100001","001001100001","001001100001","001001100001","001001100001","001001100001","000101010001")
+);
+  \end{minted}
+  \end{code}
+
+\hyperref[code:2]{Code Snippet 2} above shows the ROM implemented to display the snake sprite. A sprite ROM is essentially a two dimensional array where the width and height represents the size of the sprite. In this case it is eight by eight. And each element is an RGB colour value. The ROM is indexed using the x and y counter values, and then is rendered at the desired location. Rendering static sprites is very simple, but it gets slightly tricky when trying to render animated sprites. An animated sprite contains multiple images, hence the bitmap array is an array of two-dimensional arrays.
+
+\begin{code}
+  \label{code:3}
+  \captionof*{listing}{Code Snippet 3: {\em Type definition for a GIF with 2 frames}}
+  \vspace{-0.5em}
+  \begin{minted}
+  [
+  frame=single,
+  framesep=10pt,
+  baselinestretch=1.2,
+  bgcolor=backgroundColour,
+  fontsize={\fontsize{8.5}{6.5}\selectfont},
+  % linenos,
+  tabsize=2,
+  breaklines
+  ]
+  {vhdl}
+type apple_gif_sprite is array (0 to 1, 0 to 15, 0 to 15) of std_logic_vector(0 to 11);
+  \end{minted}
+  \end{code}
+
+Due to page space constraints, only the type definition is shown in \hyperref[code:3]{Code Snippet 3} above. The above syntax defines a 16 by 16 sprite with 2 frames. And in this case, both the frame and the individual pixel colour in the bitmap needs to be indexed. A simple counter signal is used to index the current frame of the animated sprite. Within the current frame, the x and y counter values are used to get the RGB colour value.\\
+These bit maps are generated by a Python script which takes in a GIF or PNG and generates VHDL ROM syntax. Which is then included in the code. All the ROMS are stored in the file \verb|snake.vhd| which is shown in \hyperref[code:snake]{Source Code 2} in the \hyperref[sec:app]{Appendix}.. And the python script is in \hyperref[code:py]{Source Code 13} in the \hyperref[sec:app]{Appendix} as well.
+
+\vspace{-1em}
+\subsection{\fontsize{11.4pt}{12pt}\selectfont \bf Development Process \label{sec:2.3}}
 
 
 
@@ -471,5 +529,7 @@ As mentioned in section \ref{sec:2.2.1} of this report, graphics used in this ga
 \end{document}
 
 %% [1] https://digilent.com/reference/programmable-logic/basys-3/start
-
+% [2] apple sprite
+% [3] brick sprite
+% [4] snake sprite
 % LSFR
