@@ -106,7 +106,8 @@
        \vspace{1.5cm}
 
        \textbf{Akshay Gopinath}\\
-       \textbf{Registration Number: 2005614}
+       \textbf{Registration Number: 2005614}\\
+       \textbf{Word Count: xxxx}\\
 
        \vfill
         \begin{figure}[h]
@@ -168,7 +169,7 @@
 \listoffigures
 \clearpage
 
-\listoftables
+% \listoftables
 
 \clearpage
 
@@ -400,6 +401,62 @@ Figure \ref{fig:13} on the left shows the entity diagram of the \verb|vga_contro
 
 \vspace{-1em}
 \subsubsection{\fontsize{10pt}{12pt}\selectfont \bf nbit\_clk\_div \label{sec:2.2.7}}
+\vspace{-0.5em}
+\begin{figure}[h]
+\centering
+\captionsetup{justification=centering}
+\begin{subfigure}{0.5\textwidth}
+
+%   \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.6]{clk-block.pdf}
+  \caption{\em Flow chart for nbit\_clk\_div}
+
+% \caption{\em Diagram of a Differential Drive Mobile Robot}
+\label{fig:subim5}
+\end{subfigure}
+\begin{subfigure}{0.4\textwidth}
+%   \centering
+  %\captionsetup{justification=centering}
+  \includegraphics[scale = 0.72]{clk_div.pdf}
+  \caption{\em Entity block of nbit\_clk\_div}
+  
+% \caption{\em Differential Drive Robot Kinematics}
+\label{fig:subim6}
+\end{subfigure}
+\caption{\em nbit\_clk\_div module diagrams}
+\label{fig:14}
+\end{figure}
+
+Figure \ref{fig:14} above shows the flow diagram and entity diagram of the \verb|nbit_clk_div| module (Figure \ref{fig:subim5} and \ref{fig:subim6} respectively). There is one input, the clock and one output, the divided clock. This module is a configurable and generic which is configurable, such as the division factor and the duty cycle. This is possible because the module instantiates another module called \verb|nbit_counter| inside it, which also a generic component. The counter is clocked at 100Mhz (the master clock) and the output is compared with the configured highest count. If the counter reaches a value within a certain threshold, it makes the output high, else makes it low. And the constant \verb|HI_TIME| is calculated from a generic value \verb|high_count|, to control the duty cycle as per the user's usage.
+
+\begin{wrapfigure}[7]{l}{0.35\textwidth}
+    \centering
+    \includegraphics[scale = 0.8]{counter.pdf}
+    \caption{\em nbit\_counter module}
+    \label{fig:15}
+\end{wrapfigure}
+~\\
+Figure \ref{fig:15} on the left-hand side shows the generic counter used inside the clock divider. It has a configurable maximum count value. It is a very general purpose module as it has a \verb|negate| input, and the \verb|cin| input and \verb|cout| output can be used to easily chain multiple counters. The output of this module is used in the clock divider module in order to generate the divided clock signal. 
+
+\vspace{-1em}
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf nbit\_bcd\_counter \label{sec:2.2.7}}
+
+\vspace{-1em}
+\begin{wrapfigure}[7]{l}{0.37\textwidth}
+  \centering
+  \includegraphics[scale = 0.8]{bcd.pdf}
+  \caption{\em nbit\_bcd\_counter module}
+  \label{fig:16}
+\end{wrapfigure}
+~\\
+Figure \ref{fig:16} on the left shows the entity block diagram of the \verb|nbit_bcd_counter| module, which is a generic BCD counter which is configurable from a maximum count between 0$\rightarrow$99. This module is used to keep track of the score as the snake eats the food objects. The implementation of this module is very simple, inside it are two modulo-10 counters that are cascaded. When one modulo-10 counter reaches it's $1001_2$ (in up count) or $0000_2$ (in down count), the second counter is incremented or decremented respectively. There are 3 inputs, the original master clock (\verb|orig_clk|, to help with synchronisation), the clock (\verb|clk|) at which the counter is incremented, \verb|up_down| to swap between up and down count mode, and \verb|reset|. The \verb|is_zero| output is not used. This module is instantiated inside the \verb|snake| module, and two are instantiated (as there are 4 7-segment displays) and are cascaded using the \verb|cout| output. The output of the 2 BCD counters are inputs to the \verb|four_digits| module.
+
+\clearpage
+
+\subsubsection{\fontsize{10pt}{12pt}\selectfont \bf Bitmapped Sprites and GIFs \label{sec:2.2.7}}
+
+As mentioned in section \ref{sec:2.2.1} of this report, graphics used in this game are stored as bitmap ROMs. This section details how sprites as well as GIFs were rendered on the VGA monitor. 
 
 
 
