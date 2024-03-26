@@ -25,7 +25,7 @@ python convert_gif.py
 
 ## Showcase 
 
-
+![](./images/vid.gif)
 
 ## Compiling the project
 
