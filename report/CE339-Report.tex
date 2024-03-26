@@ -107,7 +107,7 @@
 
        \textbf{Akshay Gopinath}\\
        \textbf{Registration Number: 2005614}\\
-       \textbf{Word Count: xxxx}\\
+       \textbf{Word Count: 3944}\\
 
        \vfill
         \begin{figure}[h]
@@ -159,7 +159,42 @@
 \setlength{\parindent}{0pt}
 
 
+This report aims to showcase and explain the design as well the process of developing a complex digital system. The digital system designed in this experiment is a simplified version of the class `snake' game. The main aim is to design a playable snake game with hardware sprites (static and animated), whilst showing the player score. The target board is the Digilent Basys3, hence the VGA port is used to display graphics and the 7-segment display is used to show the score.
+
 }
+
+\clearpage
+
+\thispagestyle{plain}
+\begin{center}
+    \Large
+    \textbf{CE339 - High Level Digital Design}
+        
+    \vspace{0.4cm}
+    \large
+    \textbf{Assignment 2 -- ``Snake'' Video Game}
+        
+    \vspace{0.4cm}
+    \textbf{Akshay Gopinath}
+       
+    %\vspace{0.9cm}
+    \section*{Acknowledgements}
+    \fontsize{11pt}{12pt}\selectfont
+    
+\end{center}
+\fontsize{11pt}{12pt}\selectfont
+{
+\setlength{\parindent}{0pt}
+
+I would like to give my deepest appreciation to those who provided me the possibility to complete my this
+design challenge. A special gratitude I give to the module supervisor of the CE339 module, Dr. Wenqiang Yi for their guidance and encouragement, and providing me with the necessary material to learn how to complete this project.
+
+I would also like to acknowledge with appreciation, the help of the technicians from Laboratory 8, who provided
+me access to the necessary equipment to complete the project, both during and outside lab sessions hours. A very
+special thanks goes to my peer, PhD student and GLA, Michal Borowski who provided me with tips and guidance to complete my design, especially when it came to rendering hardware sprites on the VGA display.
+
+}
+
 \clearpage
 
 \tableofcontents
@@ -562,11 +597,16 @@ The snake source code shown in \hyperref[code:snake]{Source Code 2} could also b
 
 
 By the end of the project, a playable and functional snake game was implemented with hardware static and animated sprites as well as multiple levels. Both the VGA graphics (to display the game) and the 7-segment display (to show the player score) worked successfully and as expected. This can be seen from the pictures from Section \ref{sec:3} of the report.~\\
-~\\
 
-There is a lot to learn from this project. First is observing how the VGA standards work, such as the synchronisation signals, its timings and how the RGB colours raster is used to produce graphics. 
+There is a lot to learn from this project. First is observing how the VGA standards work, such as the synchronisation signals, its timings and how the RGB colours raster is used to produce graphics. With the use of memory systems, in this case ROMs (Read Only Memory), bitmaps can be stored so that they can be indexed to display both static and animated sprite based graphics. The usage and the workings of 7-segment displays and how time division multiplexing can be used to control multiple displays with one set of pins, was also observed. ~\\
 
-% often in eng...
+
+Another important lesson learnt is how hierarchical and modular based design can be used to design a digital system. In this case, every distinct logic has been attempted to be split into separate entities to allow for a modular design with an easy-to-follow hierarchy from top to low level. For example, using separate entities for circuits such as button debouncing, clock divider, snake game logic etc.~\\
+
+
+Often in engineering, first iterations are not always bug free or even functional. And a design will need to go through different patches in order to reach a functional/playable state. And this was the case for this project as well, as showcased in \ref{sec:2.3} of this report. And this highlights the importance of using a version control system, in this case Git in order to keep track of changes within the source code that is being developed.~\\
+
+Overall, this project was successfully implemented with great results, just like every other engineering project, has scope for future extensions and improvements.
 
 
 \clearpage
@@ -591,7 +631,7 @@ There is a lot to learn from this project. First is observing how the VGA standa
 %% [1] https://digilent.com/reference/programmable-logic/basys-3/start
 % [2] apple sprite
 % [3] brick sprite
-% [4] snake sprite
+% [4] snake sprite https://www.mariowiki.com/Snake_Block
 % [5] LSFR https://en.wikipedia.org/wiki/Linear-feedback_shift_register
 % [6] fpga project website
 % [7] https://stackoverflow.com/questions/19708301/making-a-clock-divider
