@@ -531,13 +531,11 @@ The sprite texture used for the food is shown in reference [2], for the brick/bo
 \vspace{-0.5em}
 \subsection{\fontsize{11.4pt}{12pt}\selectfont \bf Possible Design Improvements \label{sec:2.4}}
 
-There are many places where the current hardware design can be improved. For example the current pseudo random location generation uses a very simple arithmetic operation to `randomise' the location of the food. A smarter approach would have been to use a Linear Feedback Shift Register design as shown in reference [7], which is a very popular approach in both hardware and software to generate random numbers. The current apprach was chosen due to simplicity, and works well. And also due to time contraints for the project. ~\\
+There are many places where the current hardware design can be improved. For example the current pseudo random location generation uses a very simple arithmetic operation to `randomise' the location of the food. A smarter approach would have been to use a Linear Feedback Shift Register (LFSR) design as shown in reference [7], which is a very popular approach in both hardware and software to generate random numbers. The current apprach was chosen due to simplicity, and works well. And also due to time contraints for the project. ~\\
 ~\\
 The next improvement that could be made with more time is the visuals of the game. The snake sprite could have been animated and also add a textured background to the game, rather than a solid black background. This was not done again due to time constraints but this shouldn't be hard to adapt into the current code base, as rendering sprites and even animated GIFs has been achieved in this project. ~\\
 ~\\
 The snake source code shown in \hyperref[code:snake]{Source Code 2} could also be improved. As all the ROMs are stored in this one file, it makes the file rather large in terms of lines of code. The ROMs could have possibly been stored elsewhere, maybe a separate entity. This would improve code reliability.
-
-
 
 \clearpage
 
@@ -552,19 +550,38 @@ The snake source code shown in \hyperref[code:snake]{Source Code 2} could also b
 
 
 
-% \section{\fontsize{11.3pt}{12pt}\selectfont \bf Conclusion}
-% \fontsize{11pt}{12pt}\selectfont \label{sec:4}
+\clearpage
 
 
 
 
-% \section{\fontsize{11.3pt}{12pt}\selectfont \bf References}
-% \fontsize{11pt}{12pt}\selectfont \label{sec:5}
+
+
+\section{\fontsize{11.3pt}{12pt}\selectfont \bf Conclusion}
+\fontsize{11pt}{12pt}\selectfont \label{sec:4}
+
+
+By the end of the project, a playable and functional snake game was implemented with hardware static and animated sprites as well as multiple levels. Both the VGA graphics (to display the game) and the 7-segment display (to show the player score) worked successfully and as expected. This can be seen from the pictures from Section \ref{sec:3} of the report.~\\
+~\\
+
+There is a lot to learn from this project. First is observing how the VGA standards work, such as the synchronisation signals, its timings and how the RGB colours raster is used to produce graphics. 
+
+% often in eng...
+
+
+\clearpage
+
+
+\section{\fontsize{11.3pt}{12pt}\selectfont \bf References}
+\fontsize{11pt}{12pt}\selectfont \label{sec:5}
 
 
 
-% \section{\fontsize{11.3pt}{12pt}\selectfont \bf Appendix}
-% \fontsize{11pt}{12pt}\selectfont \label{sec:app}
+\clearpage
+
+
+\section{\fontsize{11.3pt}{12pt}\selectfont \bf Appendix}
+\fontsize{11pt}{12pt}\selectfont \label{sec:app}
 
 
 }
