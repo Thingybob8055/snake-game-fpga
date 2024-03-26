@@ -109,7 +109,7 @@ begin
         seg => seg
     );
 
-    -- if count = 2, display dp = 0 else dp = 1 (to display decimal point on 7-segment display)
+    -- disable decimal point 
     dp <= '1';
 
 end Behavioral;

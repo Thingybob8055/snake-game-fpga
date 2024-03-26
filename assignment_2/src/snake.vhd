@@ -4,24 +4,24 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity snake is
     Port ( clk_100mhz : in STD_LOGIC;					--  master clock 100MHz
-		   pixel_clk : in STD_LOGIC;					-- pixel clock
-		   update : in STD_LOGIC;						-- signal to update the food position
-		   clk_500hz : in STD_LOGIC;					-- 500Hz clock
-		   xCount : in unsigned(10 downto 0);			-- x position from horizontal counter of vga driver
-		   yCount : in unsigned(10 downto 0);			-- y position from vertical counter of vga driver
-		   rand_X : in unsigned(6 downto 0);			-- random x position for the food
-		   rand_Y : in unsigned(6 downto 0);			-- random y position for the food
+           pixel_clk : in STD_LOGIC;					-- pixel clock
+           update : in STD_LOGIC;						-- signal to update the food position
+           clk_500hz : in STD_LOGIC;					-- 500Hz clock
+           xCount : in unsigned(10 downto 0);			-- x position from horizontal counter of vga driver
+           yCount : in unsigned(10 downto 0);			-- y position from vertical counter of vga driver
+           rand_X : in unsigned(6 downto 0);			-- random x position for the food
+           rand_Y : in unsigned(6 downto 0);			-- random y position for the food
            switch : in STD_LOGIC_VECTOR(7 downto 0);	-- switches 0-7
            btn_up : in STD_LOGIC;						-- up button
            btn_left : in STD_LOGIC;						-- left button
            btn_right : in STD_LOGIC;					-- right button
            btn_down : in STD_LOGIC;						-- down button
-		   display : in STD_LOGIC;						-- display signal to enable rgb when blanking is off
+           display : in STD_LOGIC;						-- display signal to enable rgb when blanking is off
            led : out STD_LOGIC_VECTOR(7 downto 0);		-- leds 0-7
            vgared : out STD_LOGIC_VECTOR(3 downto 0);	-- vga red
            vgagreen : out STD_LOGIC_VECTOR(3 downto 0);	-- vga green
            vgablue : out STD_LOGIC_VECTOR(3 downto 0);	-- vga blue
-		   seg  : out std_logic_vector (6 downto 0); 	-- 7-segment display
+           seg  : out std_logic_vector (6 downto 0); 	-- 7-segment display
            dp   : out std_logic; 						-- 7-segment display decimal point
            an   : out std_logic_vector (3 downto 0)		-- 7-segment display anodes
          );
