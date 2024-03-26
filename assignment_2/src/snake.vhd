@@ -1730,7 +1730,7 @@ architecture Behavioral of snake is
 
 	);
 
-	-- snale body sprite
+	-- snake body sprite
 	type color_sprite_8 is array (0 to 7, 0 to 7) of std_logic_vector(0 to 11);
 	constant SNAKE_ROM : color_sprite_8 := (
 		("010101100010","011010000010","011010000010","011010000010","011010000010","011010000010","011010000010","001001010001"),
@@ -1777,20 +1777,20 @@ architecture Behavioral of snake is
 
     signal brick_clr : std_logic_vector(11 downto 0);  -- brick colour sognal
 
-	signal snake_clr : std_logic_vector(11 downto 0); -- snake colour signal
+    signal snake_clr : std_logic_vector(11 downto 0); -- snake colour signal
 
-	signal bcd_counter_out_1 : std_logic_vector(7 downto 0);  -- signals for the bcd counters
-	signal bcd_counter_out_2 : std_logic_vector(7 downto 0);
-	signal bcd_counter_1_cout : std_logic;
-	signal bcd_counter_1_clk : std_logic;
-	signal bcd_counter_2_clk : std_logic;
-	signal increment_score : std_logic;
-	signal bcd_counter_1_reset : std_logic;
-	signal bcd_counter_2_reset : std_logic;
+    signal bcd_counter_out_1 : std_logic_vector(7 downto 0);  -- signals for the bcd counters
+    signal bcd_counter_out_2 : std_logic_vector(7 downto 0);
+    signal bcd_counter_1_cout : std_logic;
+    signal bcd_counter_1_clk : std_logic;
+    signal bcd_counter_2_clk : std_logic;
+    signal increment_score : std_logic;
+    signal bcd_counter_1_reset : std_logic;
+    signal bcd_counter_2_reset : std_logic;
 
-	signal is_gif_painted : std_logic;  -- is the gif painted
+    signal is_gif_painted : std_logic;  -- is the gif painted
     signal gif_clr : std_logic_vector(11 downto 0); -- gif colour signal
-	signal gif_x : unsigned(10 downto 0) := to_unsigned(212, 11);
+    signal gif_x : unsigned(10 downto 0) := to_unsigned(212, 11);
     signal gif_y : unsigned(10 downto 0) := to_unsigned(50, 11);
 begin
     led <= switch;  -- connect the leds to the switches
@@ -1805,20 +1805,20 @@ begin
         end if;
     end process;
     
-	-- paint the apple gif at the current x, y position
+    -- paint the apple gif at the current x, y position
     is_img_painted <= '1' when (xCount >= img_x and xCount < img_x + 16 and yCount >= img_y and yCount < img_y + 16) else '0';
     
-	-- select the colours from the ROMs
-	img_clr <= APPLE_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
+    -- select the colours from the ROMs
+    img_clr <= APPLE_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount - img_y) mod 16),(to_integer(xCount - img_x)) mod 16) when is_img_painted = '1' else (others => '0');
 
     brick_clr <= BRICK_ROM((to_integer(yCount) mod 16),(to_integer(xCount) mod 16)) when border = '1' else (others => '0');
 
-	snake_clr <= SNAKE_ROM((to_integer(yCount) mod 8),(to_integer(xCount) mod 8)) when snakeBody /= (127 downto 0 => '0') else (others => '0');
+    snake_clr <= SNAKE_ROM((to_integer(yCount) mod 8),(to_integer(xCount) mod 8)) when snakeBody /= (127 downto 0 => '0') else (others => '0');
 
-	is_gif_painted <= '1' when (xCount >= gif_x and xCount < gif_x + 216 and yCount >= gif_y and yCount < gif_y + 384) else '0';
+    is_gif_painted <= '1' when (xCount >= gif_x and xCount < gif_x + 216 and yCount >= gif_y and yCount < gif_y + 384) else '0';
     gif_clr <= COLOR_GIF_ROM(to_integer(current_frame_gif(11 downto 3)), (to_integer(yCount(10 downto 3) - gif_y(10 downto 3)) mod 48),(to_integer(xCount(10 downto 3) - gif_x(10 downto 3))) mod 27) when is_gif_painted = '1' else (others => '0');
 
-	-- instantiate BCD counter for minutes
+    -- instantiate BCD counter for minutes
     bcd_counter_unit_1 : entity work.nbit_bcd_counter(Behavioral)
         Port map (orig_clk => clk_100mhz, clk => bcd_counter_1_clk, up_down => '0', reset => bcd_counter_1_reset, cout => bcd_counter_1_cout, is_zero => open, output => bcd_counter_out_1);
 
@@ -1826,35 +1826,35 @@ begin
     bcd_counter_unit_2 : entity work.nbit_bcd_counter(Behavioral)
         Port map (orig_clk => clk_100mhz, clk => bcd_counter_2_clk, up_down => '0', reset => bcd_counter_2_reset, cout => open, is_zero => open, output => bcd_counter_out_2);
 
-	-- instantiate four digits display
-	four_digits_unit : entity work.four_digits(Behavioral)
-		Port map (d3 => bcd_counter_out_2(7 downto 4),
+    -- instantiate four digits display
+    four_digits_unit : entity work.four_digits(Behavioral)
+        Port map (d3 => bcd_counter_out_2(7 downto 4),
                   d2 => bcd_counter_out_2(3 downto 0),
                   d1 => bcd_counter_out_1(7 downto 4),
                   d0 => bcd_counter_out_1(3 downto 0),
                   ck => clk_500hz, seg => seg, an => an, dp => dp);
 
-	-- process to set the state of the bcd counters for the score
-	process(clk_100mhz)
-	begin
-		if rising_edge(clk_100mhz) then
-			bcd_counter_2_clk <= bcd_counter_1_cout;
-			if game_over = '0' then
-				bcd_counter_1_reset <= '0';
-				bcd_counter_2_reset <= '0';
-				if increment_score = '1' then
-					bcd_counter_1_clk <= '1';
-				else
-					bcd_counter_1_clk <= '0';
-				end if;
-			elsif game_over = '1' then
-				bcd_counter_1_clk <= '1';
-				bcd_counter_2_clk <= '1';
-				bcd_counter_1_reset <= '1';
-				bcd_counter_2_reset <= '1';
-			end if;
-		end if;
-	end process;
+    -- process to set the state of the bcd counters for the score
+    process(clk_100mhz)
+    begin
+        if rising_edge(clk_100mhz) then
+            bcd_counter_2_clk <= bcd_counter_1_cout;
+            if game_over = '0' then
+                bcd_counter_1_reset <= '0';
+                bcd_counter_2_reset <= '0';
+                if increment_score = '1' then
+                    bcd_counter_1_clk <= '1';
+                else
+                    bcd_counter_1_clk <= '0';
+                end if;
+            elsif game_over = '1' then
+                bcd_counter_1_clk <= '1';
+                bcd_counter_2_clk <= '1';
+                bcd_counter_1_reset <= '1';
+                bcd_counter_2_reset <= '1';
+            end if;
+        end if;
+    end process;
 
     process(clk_100mhz)
     begin
@@ -1868,7 +1868,6 @@ begin
                     snakeY(count) <= to_unsigned(127, 7);
                 end loop;
                 size <= to_unsigned(1, 7);
---                SIZE_INCREMENT <= 1;
                 game_over <= '0';
             elsif game_over = '0' then
                 if update = '1' then
@@ -1897,17 +1896,16 @@ begin
                         if size < (128 - SIZE_INCREMENT) then
                             size <= size + SIZE_INCREMENT; -- increment the size of snake
                         end if;
-						increment_score <= '1';
+                        increment_score <= '1';
                     
-                    -- elsif border = '1' and snakeBody(0) = '1' then
                     elsif brick_clr /= "000000000000" and snakeBody(0) = '1' then -- border collision
                          game_over <= '1';
                     
                     elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then --snake collision
                         game_over <= '1';
 
-					else
-						increment_score <= '0';
+                    else
+                        increment_score <= '0';
                     end if;
                 end if;
             end if;
@@ -1957,7 +1955,6 @@ begin
                     border <= '0';
                 end if;
             else
-                -- if (xCount(9 downto 3) = 0) or (xCount(9 downto 3) = 79) or (yCount(9 downto 3) = 0) or (yCount(9 downto 3) = 59) then
                 if (xCount < img_size_x or xCount > 640 - img_size_x or yCount < img_size_y or yCount > 480 - img_size_y) then    
                     border <= '1';
                 else 
@@ -1974,7 +1971,6 @@ begin
         if rising_edge(clk_100mhz) then
         if pixel_clk = '1' then
             for count in 0 to 127 loop
-				-- change this to account for the size of the snake rom sprite which is 16x16
                 if (xCount(9 downto 3) = snakeX(count)) and (yCount(9 downto 3) = snakeY(count)) then
                     snakeBody(count) <= '1';
                 else
@@ -1985,12 +1981,12 @@ begin
         end if;
     end process;
     
-	-- set vgared, vgagreen, vgablue by splitting the 12 bit rgb signal
+    -- set vgared, vgagreen, vgablue by splitting the 12 bit rgb signal
     vgared <= rgb(11 downto 8);
     vgagreen <= rgb(7 downto 4);
     vgablue <= rgb(3 downto 0);
     
-	-- set the rgb signal based on the game state and the colours from the ROMs
+    -- set the rgb signal based on the game state and the colours from the ROMs
     rgb <= (others => '0') when display = '1' else 
            gif_clr when game_over = '1' else
            snake_clr when (snakeBody /= (127 downto 0 => '0')) else

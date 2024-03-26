@@ -39,15 +39,15 @@ begin
     vga_controller : entity work.vga_controller_640_60(Behavioral)
         Port map (rst => '0', pixel_clk => pixel_clk, HS => hsync, VS => vsync, hcount => xCount, vcount => yCount, blank => display);
 
-	-- instantiate clock divider for 100MHz to 25MHz
+    -- instantiate clock divider for 100MHz to 25MHz
     clk_div_unit_25Mhz : entity work.nbit_clk_div(Behavioral)
         Generic map (div_factor => 4,
                      high_count => 2,
                      num_of_bits => 3)
         Port map (clk_in => clk_100mhz, output => pixel_clk);
 
-	-- instantiate clock divider for 100MHz to 500Hz
-	clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
+    -- instantiate clock divider for 100MHz to 500Hz
+    clk_div_unit_500hz : entity work.nbit_clk_div(Behavioral)
         Generic map (div_factor => 200000,
                      high_count => 200000/2,
                      num_of_bits => 18)
@@ -57,12 +57,12 @@ begin
     random_grid : entity work.randomGrid(Behavioral)
         Port map (pixel_clk => pixel_clk, rand_X => rand_X, rand_Y => rand_Y);
 
-	-- insitiate update clock
+    -- insitiate update clock
     update_clk : entity work.updateClk(Behavioral)
         Generic map (max_value => 4000000)
         Port map (clk_100mhz => clk_100mhz, update => update);
 
-	-- instantiate debounce for buttons
+    -- instantiate debounce for buttons
     up_sig : entity work.Debounce(Behavioral)
         Port map (clk => pixel_clk, rst => '0', noisy => btn_up, button_debounced => up);
 
