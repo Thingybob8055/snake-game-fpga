@@ -28,28 +28,7 @@ entity snake is
 end snake;
 
 architecture Behavioral of snake is
-    constant SIZE_INCREMENT : integer := 4;   -- size increment for the snake body
-    
-    signal size : unsigned(6 downto 0);	    -- keep track of the size of the snake
-    signal pearX : unsigned(6 downto 0) := "0101000"; 
-    signal pearY : unsigned(6 downto 0) := "0001010";
-    signal game_over : std_logic;  -- signal to indicate game over
-    signal border : std_logic; -- signal to draw border and food
-
-    type snake_array is array (0 to 127) of unsigned(6 downto 0);  -- array to keep track of the snake body
-    -- type snakeY_array is array (0 to 127) of unsigned(6 downto 0);
-
-    signal snakeX : snake_array;	-- snake x positions
-    signal snakeY : snake_array;	-- snake y positions
-
-    signal snakeBody : unsigned(127 downto 0);  -- vector to render the snake body
-    signal direction : std_logic_vector(3 downto 0) := "0001";
-
-    signal count : integer;  -- counter to keep track of the snake body in the for loops
-
-    signal start : std_logic;  -- signal to start the game
-    
-	-- rick astley never gonna give you up GIF
+    -- rick astley never gonna give you up GIF
     type color_gif_sprite is array (0 to 31, 0 to 47, 0 to 26) of std_logic_vector(0 to 11);
 	constant COLOR_GIF_ROM : color_gif_sprite := (
 
@@ -1764,7 +1743,24 @@ architecture Behavioral of snake is
 		("001001010001","001001100001","001001100001","001001100001","001001100001","001001100001","001001100001","000101010001")
 	);
 
---    vgaRed <= COLOR_ROM(row, col)(11 downto 8);
+	constant SIZE_INCREMENT : integer := 4;   -- size increment for the snake body
+    
+    signal size : unsigned(6 downto 0);	    -- keep track of the size of the snake
+    signal game_over : std_logic;  -- signal to indicate game over
+    signal border : std_logic; -- signal to draw border and food
+
+    type snake_array is array (0 to 127) of unsigned(6 downto 0);  -- array to keep track of the snake body
+    -- type snakeY_array is array (0 to 127) of unsigned(6 downto 0);
+
+    signal snakeX : snake_array;	-- snake x positions
+    signal snakeY : snake_array;	-- snake y positions
+
+    signal snakeBody : unsigned(127 downto 0);  -- vector to render the snake body
+    signal direction : std_logic_vector(3 downto 0) := "0001";
+
+    signal count : integer;  -- counter to keep track of the snake body in the for loops
+
+    signal start : std_logic;  -- signal to start the game
 
     constant img_size_x : natural := 16; -- size of the image sprites
     constant img_size_y : natural := 16;
@@ -1895,14 +1891,11 @@ begin
                             null;
                     end case;
                 else 
-                    if img_clr /= "000000000000" and (snakeBody /= (127 downto 0 => '0')) then                  
---                    if (snakeX(0) = pearX) and (snakeY(0) = pearY) then
+                    if img_clr /= "000000000000" and (snakeBody /= (127 downto 0 => '0')) then
                         img_x <= rand_X & "0000";  -- if food is eaten, increment size and change food position
                         img_y <= rand_Y & "0000";
                         if size < (128 - SIZE_INCREMENT) then
-                            size <= size + SIZE_INCREMENT;
-							-- double the size increment
---							SIZE_INCREMENT <= SIZE_INCREMENT * 2;
+                            size <= size + SIZE_INCREMENT; -- increment the size of snake
                         end if;
 						increment_score <= '1';
                     
@@ -1910,7 +1903,7 @@ begin
                     elsif brick_clr /= "000000000000" and snakeBody(0) = '1' then -- border collision
                          game_over <= '1';
                     
-                    elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then --snaek collision
+                    elsif (snakeBody(127 downto 1) /= (127 downto 1 => '0') and snakeBody(0) = '1') then --snake collision
                         game_over <= '1';
 
 					else

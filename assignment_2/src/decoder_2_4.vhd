@@ -1,16 +1,3 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: decoder_2_4 - Behavioral
--- Dependancies: None
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
----------------------------------------------------
--- This module is a simple 2 to 4 decoder
--- Used for selecting the 7 segment display anodes
----------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 

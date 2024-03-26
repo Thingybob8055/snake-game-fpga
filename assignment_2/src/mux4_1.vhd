@@ -1,17 +1,3 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: mux4_1 - Behavioral
--- Dependancies: None
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
----------------------------------------------------
--- This module is a geneoric 4:1 mux
--- The input is a 4 bit vector and the select is a 2 bit vector
--- The output is a single bit
----------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 

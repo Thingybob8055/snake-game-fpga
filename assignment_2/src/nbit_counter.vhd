@@ -1,23 +1,7 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: nbit_counter - Behavioral
--- Dependancies: None
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity nbit_counter is
     Generic (width  : NATURAL := 4;

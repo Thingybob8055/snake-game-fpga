@@ -1,17 +1,3 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: four_digits - Behavioral
--- Dependancies: decoder_2_4, mux4_1, one_digit
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
----------------------------------------------------
--- This module multiplexes 4 4-bit inputs to 4 7-segment displays
--- It uses the decoder to select the anodes and a counter clocked at
--- 500Hz to multiplex the between 7 segment display and the 4 inputs
----------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;

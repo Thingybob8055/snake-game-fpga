@@ -1,16 +1,3 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: one_digit - Behavioral
--- Dependancies: None
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
----------------------------------------------------
--- This module takes a 4-bit input and outputs a 7-bit pattern to display the input digit on a 7-segment display
--- It's a type of decoder
----------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 

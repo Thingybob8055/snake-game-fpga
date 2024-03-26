@@ -1,19 +1,3 @@
-----------------------------------------------------------------------------------
--- Author: Akshay Gopinath 
--- Module Name: nbit_bcd_counter - Behavioral
--- Dependancies: None
--- Project Name: CE339 Assignment 1
--- Target Devices: Digilent Basys 3 
-----------------------------------------------------------------------------------
-
----------------------------------------------------
--- This module is a 2 digit BCD counter that can be used to count up or down for 2 7 segment displays
--- The counter can be reset and has a carry out signal to chain multiple counters
--- The counter can be set to count up or down using the up_down signal
--- The max value can be configured using the max_value generic between 0 and 99
--- The bcd+width generic need to set depending on the max value and how many bits is needed to represent the max value
----------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
