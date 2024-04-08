@@ -3,8 +3,9 @@
 ## Directory Structure
 - [src](./src/) - Contains all source files for the design
 - [constraints.xdc](./constraints.xdc) - Edited constraints file for the project
-- [scripts](./scripts/) - Utility Python scripts to generate VHDL ROMs from PNGs or GIFs.
+- [scripts](./scripts/) - Utility Python scripts to generate VHDL ROMs from PNGs or GIFs
 - [images](./images) - Images for this README file
+- [report](./report) - LaTeX report for the project
 
 ## Python Scripts
 
